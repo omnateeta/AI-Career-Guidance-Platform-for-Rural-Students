@@ -14,7 +14,6 @@ const Navbar = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false)
-  const { t } = useLanguage();
 
   const navItems = [
     { path: '/dashboard', icon: FaHome, label: t('dashboard') || 'Dashboard' },
