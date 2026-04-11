@@ -178,19 +178,19 @@ const LearningPathPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-6">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
+        className="mb-6"
       >
-        <Link to="/dashboard" className="inline-flex items-center space-x-2 text-primary-600 hover:text-primary-700 mb-4">
+        <Link to="/dashboard" className="inline-flex items-center space-x-2 text-primary-600 hover:text-primary-700 mb-3">
           <FaArrowLeft className="w-4 h-4" />
           <span>Back to Dashboard</span>
         </Link>
-        <h1 className="text-4xl font-bold text-gradient mb-2">Your Learning Path 📚</h1>
-        <p className="text-gray-600 text-lg">
+        <h1 className="text-3xl md:text-4xl font-bold text-gradient mb-2">Your Learning Path 📚</h1>
+        <p className="text-gray-600">
           Personalized roadmap to become a <span className="font-semibold text-primary-600">{learningPath.career}</span>
         </p>
       </motion.div>
@@ -199,7 +199,7 @@ const LearningPathPage = () => {
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="glass-card rounded-2xl p-8 mb-8 bg-gradient-to-r from-primary-50 to-secondary-50"
+        className="glass-card rounded-2xl p-6 mb-6 bg-gradient-to-r from-primary-50 to-secondary-50"
       >
         <div className="grid md:grid-cols-3 gap-6">
           <div>

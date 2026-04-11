@@ -1,31 +1,20 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useLanguage, supportedLanguages } from '../../context/LanguageContext'
 import { useTheme } from '../../context/ThemeContext'
 import { motion, AnimatePresence } from 'framer-motion'
-<<<<<<< HEAD
-import { FaHome, FaBriefcase, FaChartLine, FaBook, FaUsers, FaComments, FaSignOutAlt, FaGlobe, FaChevronDown } from 'react-icons/fa'
-=======
 import { FaHome, FaBriefcase, FaChartLine, FaBook, FaUsers, FaComments, FaSignOutAlt, FaLanguage, FaWifi, FaGlobe, FaChevronDown, FaMapSigns } from 'react-icons/fa'
->>>>>>> 54f2a03812145572a078d29637fc475e4f55d0a0
 import { useState } from 'react'
 
 const Navbar = () => {
   const { user, logout } = useAuth()
+  const { language, setLanguage, t } = useLanguage()
   const { lowBandwidth, toggleLowBandwidth } = useTheme()
   const navigate = useNavigate()
   const location = useLocation()
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false)
 
   const navItems = [
-<<<<<<< HEAD
-    { path: '/dashboard', label: 'Dashboard', icon: FaHome },
-    { path: '/careers', label: 'Careers', icon: FaChartLine },
-    { path: '/skills', label: 'Skills', icon: FaBook },
-    { path: '/learning', label: 'Learning', icon: FaBook },
-    { path: '/jobs', label: 'Jobs', icon: FaBriefcase },
-    { path: '/mentors', label: 'Mentors', icon: FaUsers },
-    { path: '/chat', label: 'Chat with AI', icon: FaComments },
-=======
     { path: '/dashboard', icon: FaHome, label: t('dashboard') || 'Dashboard' },
     { path: '/career-guidance', icon: FaMapSigns, label: 'Career Guidance' },
     { path: '/career-quiz', icon: FaChartLine, label: 'Career Quiz' },
@@ -35,7 +24,6 @@ const Navbar = () => {
     { path: '/jobs', icon: FaBriefcase, label: t('jobs') || 'Jobs' },
     { path: '/mentors', icon: FaUsers, label: t('mentors') || 'Mentors' },
     { path: '/chat', icon: FaComments, label: t('chat') || 'Chat' },
->>>>>>> 54f2a03812145572a078d29637fc475e4f55d0a0
   ]
 
   const handleLogout = () => {
@@ -51,13 +39,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/dashboard" className="flex items-center space-x-2">
-<<<<<<< HEAD
-            <div className="w-10 h-10 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">M</span>
-            </div>
-=======
             <img src="/logo.jpg" alt="Margdarshak AI Logo" className="h-10 w-auto rounded-lg" />
->>>>>>> 54f2a03812145572a078d29637fc475e4f55d0a0
             <span className="text-xl font-bold text-gradient hidden md:block">Margdarshak AI</span>
           </Link>
 
@@ -117,17 +99,25 @@ const Navbar = () => {
               </AnimatePresence>
             </div>
 
+            {/* Low Bandwidth Toggle */}
+            <button
+              onClick={toggleLowBandwidth}
+              className={`p-2 rounded-lg transition-all duration-300 ${
+                lowBandwidth ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-600'
+              }`}
+              title="Toggle Low Bandwidth Mode"
+            >
+              <FaWifi className="w-4 h-4" />
+            </button>
+
             {/* User Profile */}
             <Link
               to="/profile"
-              className="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity duration-300"
+              className="flex items-center cursor-pointer hover:opacity-80 transition-opacity duration-300"
             >
               <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white font-semibold">
                 {user?.profile?.name?.charAt(0) || 'U'}
               </div>
-              <span className="hidden md:block text-sm font-medium text-gray-700">
-                {user?.profile?.name || 'User'}
-              </span>
             </Link>
 
             {/* Logout Button */}

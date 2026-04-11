@@ -19,6 +19,12 @@
 }
 
 @layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
   body {
     @apply bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 text-gray-900;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -26,6 +32,37 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Remove extra spacing from headings */
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+  }
+
+  /* Remove extra spacing from paragraphs */
+  p {
+    margin-top: 0;
+  }
+
+  /* Optimize container spacing */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
   }
 
   /* Hide Google Translate banner and frame */
@@ -61,54 +98,147 @@
 }
 
 @layer components {
+  /* ===================================
+     CLAYMORPHISM DESIGN SYSTEM
+     Professional 3D Soft UI
+     =================================== */
+  
+  /* Clay Card - Primary Component */
+  .clay-card {
+    background: linear-gradient(145deg, #F8FAFC, #F3F6FB);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 
+      8px 8px 20px rgba(0, 0, 0, 0.08),
+      -8px -8px 20px rgba(255, 255, 255, 0.9),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .clay-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 
+      12px 12px 30px rgba(0, 0, 0, 0.12),
+      -12px -12px 30px rgba(255, 255, 255, 1),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
+  }
+  
+  /* Clay Card - Large */
+  .clay-card-lg {
+    background: linear-gradient(145deg, #F8FAFC, #F3F6FB);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 
+      12px 12px 30px rgba(0, 0, 0, 0.1),
+      -12px -12px 30px rgba(255, 255, 255, 1),
+      inset 0 2px 0 rgba(255, 255, 255, 0.9);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .clay-card-lg:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 
+      16px 16px 40px rgba(0, 0, 0, 0.15),
+      -16px -16px 40px rgba(255, 255, 255, 1),
+      inset 0 2px 0 rgba(255, 255, 255, 1);
+  }
+  
+  /* Clay Card - Small */
+  .clay-card-sm {
+    background: linear-gradient(145deg, #F8FAFC, #F3F6FB);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 
+      4px 4px 10px rgba(0, 0, 0, 0.06),
+      -4px -4px 10px rgba(255, 255, 255, 0.8),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .clay-card-sm:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 
+      8px 8px 20px rgba(0, 0, 0, 0.1),
+      -8px -8px 20px rgba(255, 255, 255, 0.9),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+  
   /* Glassmorphism Card */
   .glass-card {
-    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-xl;
+    @apply backdrop-blur-xl border border-white/30;
+    background: rgba(255, 255, 255, 0.75);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+  
+  .glass-card:hover {
+    @apply shadow-2xl;
+    background: rgba(255, 255, 255, 0.85);
   }
   
   .glass-card-dark {
     @apply bg-gray-900/70 backdrop-blur-lg border border-gray-700/50 shadow-xl;
   }
   
-  /* Claymorphism Card */
-  .clay-card {
-    @apply bg-white/80 backdrop-blur-md;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 
-      8px 8px 16px rgba(0, 0, 0, 0.1),
-      -8px -8px 16px rgba(255, 255, 255, 0.8),
-      inset 2px 2px 4px rgba(255, 255, 255, 0.5);
-    transition: all 0.3s ease;
-  }
+  /* ===================================
+     GRADIENT BUTTONS
+     =================================== */
   
-  .clay-card:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 
-      12px 12px 24px rgba(0, 0, 0, 0.15),
-      -12px -12px 24px rgba(255, 255, 255, 0.9),
-      inset 2px 2px 4px rgba(255, 255, 255, 0.6);
-  }
-  
-  /* Gradient Button */
   .btn-gradient {
-    @apply bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold 
-           px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 
-           transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500;
+    background: linear-gradient(135deg, #6C63FF 0%, #4FACFE 100%);
+    color: white;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 
+      6px 6px 15px rgba(108, 99, 255, 0.3),
+      -2px -2px 8px rgba(255, 255, 255, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  
+  .btn-gradient:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 
+      8px 8px 20px rgba(108, 99, 255, 0.4),
+      -3px -3px 10px rgba(255, 255, 255, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+  
+  .btn-gradient:active {
+    transform: translateY(-1px) scale(1.02);
   }
   
   .btn-gradient:disabled {
-    @apply opacity-50 cursor-not-allowed transform-none hover:shadow-lg;
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
   }
   
-  /* Card Hover Effect */
-  .card-hover {
-    @apply transition-all duration-300 hover:shadow-2xl hover:-translate-y-2;
+  /* ===================================
+     ANIMATED GRADIENTS
+     =================================== */
+  
+  .gradient-primary {
+    background: linear-gradient(135deg, #6C63FF 0%, #4FACFE 100%);
   }
   
-  /* Animated Gradient Background */
+  .gradient-accent {
+    background: linear-gradient(135deg, #FF9A9E 0%, #FAD0C4 100%);
+  }
+  
+  .gradient-ocean {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  }
+  
+  .gradient-sunset {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  }
+  
   .animated-gradient {
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background: linear-gradient(-45deg, #6C63FF, #4FACFE, #00F2FE, #FF9A9E);
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
   }
@@ -119,7 +249,10 @@
     100% { background-position: 0% 50%; }
   }
   
-  /* Floating Animation */
+  /* ===================================
+     FLOATING & PULSE ANIMATIONS
+     =================================== */
+  
   .float {
     animation: float 6s ease-in-out infinite;
   }
@@ -129,7 +262,19 @@
     50% { transform: translateY(-20px); }
   }
   
-  /* Pulse Ring */
+  .pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulseGlow {
+    0%, 100% { 
+      box-shadow: 0 0 20px rgba(108, 99, 255, 0.5);
+    }
+    50% { 
+      box-shadow: 0 0 40px rgba(108, 99, 255, 0.8), 0 0 60px rgba(79, 172, 254, 0.6);
+    }
+  }
+  
   .pulse-ring {
     @apply relative;
   }
@@ -139,7 +284,61 @@
     @apply absolute inset-0 rounded-full border-2 border-primary-500 animate-ping;
   }
   
-  /* Scrollbar Styling */
+  /* ===================================
+     PROGRESS BARS (GAMIFIED)
+     =================================== */
+  
+  .progress-clay {
+    @apply rounded-full overflow-hidden;
+    background: linear-gradient(145deg, #E5E7EB, #D1D5DB);
+    box-shadow: 
+      inset 2px 2px 5px rgba(0, 0, 0, 0.1),
+      inset -2px -2px 5px rgba(255, 255, 255, 0.7);
+  }
+  
+  .progress-clay-fill {
+    @apply rounded-full;
+    background: linear-gradient(90deg, #6C63FF 0%, #4FACFE 100%);
+    box-shadow: 2px 0 10px rgba(108, 99, 255, 0.4);
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* ===================================
+     FLOWCHART NODES
+     =================================== */
+  
+  .flow-node {
+    background: linear-gradient(145deg, #F8FAFC, #F3F6FB);
+    border-radius: 16px;
+    border: 2px solid rgba(108, 99, 255, 0.2);
+    box-shadow: 
+      6px 6px 15px rgba(0, 0, 0, 0.08),
+      -6px -6px 15px rgba(255, 255, 255, 0.9);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  
+  .flow-node:hover {
+    transform: translateY(-4px) scale(1.05);
+    border-color: rgba(108, 99, 255, 0.5);
+    box-shadow: 
+      10px 10px 25px rgba(0, 0, 0, 0.12),
+      -10px -10px 25px rgba(255, 255, 255, 1);
+  }
+  
+  .flow-node-active {
+    background: linear-gradient(135deg, #6C63FF 0%, #4FACFE 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 
+      8px 8px 20px rgba(108, 99, 255, 0.4),
+      -4px -4px 10px rgba(255, 255, 255, 0.5);
+  }
+  
+  /* ===================================
+     SCROLLBAR STYLING
+     =================================== */
+  
   ::-webkit-scrollbar {
     width: 10px;
   }
@@ -149,24 +348,52 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-gradient-to-b from-primary-400 to-secondary-400 rounded-full;
+    background: linear-gradient(to bottom, #6C63FF, #4FACFE);
+    border-radius: 10px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gradient-to-b from-primary-500 to-secondary-500;
+    background: linear-gradient(to bottom, #5B54E6, #3B9AE6);
   }
   
-  /* Loading Skeleton */
+  /* ===================================
+     LOADING SKELETON
+     =================================== */
+  
   .skeleton {
-    @apply animate-pulse bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%];
+    @apply animate-pulse;
+    background: linear-gradient(90deg, #F3F4F6 25%, #E5E7EB 50%, #F3F4F6 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
   }
   
-  /* Text Gradient */
+  @keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  
+  /* ===================================
+     TEXT GRADIENT
+     =================================== */
+  
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-secondary-600;
+    background: linear-gradient(135deg, #6C63FF 0%, #4FACFE 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   
-  /* Low Bandwidth Mode */
+  .text-gradient-accent {
+    background: linear-gradient(135deg, #FF9A9E 0%, #FAD0C4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* ===================================
+     LOW BANDWIDTH MODE
+     =================================== */
+  
   .low-bandwidth * {
     animation: none !important;
     transition: none !important;
