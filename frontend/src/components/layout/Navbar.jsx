@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useLanguage, supportedLanguages } from '../../context/LanguageContext'
 import { useTheme } from '../../context/ThemeContext'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FaHome, FaBriefcase, FaChartLine, FaBook, FaUsers, FaComments, FaSignOutAlt, FaLanguage, FaWifi, FaGlobe, FaChevronDown } from 'react-icons/fa'
+import { FaHome, FaBriefcase, FaChartLine, FaBook, FaUsers, FaComments, FaSignOutAlt, FaLanguage, FaWifi, FaGlobe, FaChevronDown, FaMapSigns } from 'react-icons/fa'
 import { useState } from 'react'
 
 const Navbar = () => {
@@ -16,6 +16,7 @@ const Navbar = () => {
 
   const navItems = [
     { path: '/dashboard', icon: FaHome, label: t('dashboard') || 'Dashboard' },
+    { path: '/career-guidance', icon: FaMapSigns, label: 'Career Guidance' },
     { path: '/career-quiz', icon: FaChartLine, label: 'Career Quiz' },
     { path: '/careers', icon: FaChartLine, label: t('careers') || 'Careers' },
     { path: '/skills', icon: FaBriefcase, label: t('skills') || 'Skills' },

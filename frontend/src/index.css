@@ -11,6 +11,37 @@
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
   }
+
+  /* Hide Google Translate banner and frame */
+  .goog-te-banner-frame {
+    display: none !important;
+  }
+  
+  .goog-te-menu-frame {
+    max-height: 400px !important;
+    overflow-y: auto !important;
+  }
+  
+  body {
+    top: 0 !important;
+    position: static !important;
+  }
+  
+  #google_translate_element {
+    display: none;
+  }
+  
+  .skiptranslate {
+    display: none;
+  }
+  
+  .goog-te-gadget {
+    font-size: 0 !important;
+  }
+  
+  .goog-te-gadget-simple {
+    display: none !important;
+  }
 }
 
 @layer components {
@@ -21,6 +52,26 @@
   
   .glass-card-dark {
     @apply bg-gray-900/70 backdrop-blur-lg border border-gray-700/50 shadow-xl;
+  }
+  
+  /* Claymorphism Card */
+  .clay-card {
+    @apply bg-white/80 backdrop-blur-md;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 
+      8px 8px 16px rgba(0, 0, 0, 0.1),
+      -8px -8px 16px rgba(255, 255, 255, 0.8),
+      inset 2px 2px 4px rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+  }
+  
+  .clay-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 
+      12px 12px 24px rgba(0, 0, 0, 0.15),
+      -12px -12px 24px rgba(255, 255, 255, 0.9),
+      inset 2px 2px 4px rgba(255, 255, 255, 0.6);
   }
   
   /* Gradient Button */
@@ -206,4 +257,36 @@ body {
 
 .goog-te-menu2 div:hover {
   background: #f3f4f6 !important;
+}
+
+/* React Flow Custom Styles */
+.react-flow__node {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.react-flow__node:hover {
+  transform: scale(1.05);
+}
+
+.react-flow__edge-path {
+  stroke-width: 2;
+}
+
+.react-flow__controls {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.react-flow__controls-button {
+  background: white;
+  border: 1px solid #e5e7eb;
+}
+
+.react-flow__controls-button:hover {
+  background: #f3f4f6;
+}
+
+.react-flow__minimap {
+  border-radius: 8px;
+  overflow: hidden;
 }

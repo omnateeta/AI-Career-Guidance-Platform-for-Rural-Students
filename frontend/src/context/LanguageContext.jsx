@@ -80,8 +80,19 @@ export const LanguageProvider = ({ children }) => {
 
   // Initialize Google Translate
   useEffect(() => {
+    // Prevent multiple initializations
+    if (window.googleTranslateInitialized) {
+      setGoogleTranslateReady(true)
+      return
+    }
+
     // Add Google Translate script
     const addGoogleTranslateScript = () => {
+      // Check if script already exists
+      if (document.querySelector('script[src*="translate.google.com"]')) {
+        return
+      }
+
       const script = document.createElement('script')
       script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit'
       script.async = true
@@ -91,35 +102,35 @@ export const LanguageProvider = ({ children }) => {
       document.body.appendChild(script)
     }
 
-    // Initialize Google Translate callback
-    window.googleTranslateElementInit = () => {
-      if (window.google && window.google.translate) {
-        // Initialize for navbar dropdown
-        new window.google.translate.TranslateElement(
-          {
-            pageLanguage: 'en',
-            includedLanguages: 'en,hi,ta,te,kn,ml,mr,gu,pa,bn,or,as,ur,es,fr,de,pt,zh,ja,ko,ar,ru',
-            autoDisplay: false,
-          },
-          'google_translate_element_nav'
-        )
-        
-        // Initialize hidden element for programmatic control
-        new window.google.translate.TranslateElement(
-          {
-            pageLanguage: 'en',
-            includedLanguages: 'en,hi,ta,te,kn,ml,mr,gu,pa,bn,or,as,ur,es,fr,de,pt,zh,ja,ko,ar,ru',
-            autoDisplay: false,
-          },
-          'google_translate_element'
-        )
-        
-        setGoogleTranslateReady(true)
+    // Initialize Google Translate callback - define only once
+    if (!window.googleTranslateElementInit) {
+      window.googleTranslateElementInit = () => {
+        if (window.google && window.google.translate && !window.googleTranslateInitialized) {
+          window.googleTranslateInitialized = true
+          
+          try {
+            // Initialize hidden element for programmatic control
+            new window.google.translate.TranslateElement(
+              {
+                pageLanguage: 'en',
+                includedLanguages: 'en,hi,ta,te,kn,ml,mr,gu,pa,bn,or,as,ur,es,fr,de,pt,zh,ja,ko,ar,ru',
+                autoDisplay: false,
+              },
+              'google_translate_element'
+            )
+            
+            setGoogleTranslateReady(true)
+            console.log('Google Translate initialized successfully')
+          } catch (error) {
+            console.error('Error initializing Google Translate:', error)
+          }
+        }
       }
     }
 
     // Check if already loaded
     if (window.google && window.google.translate) {
+      window.googleTranslateInitialized = true
       setGoogleTranslateReady(true)
     } else {
       addGoogleTranslateScript()
@@ -127,7 +138,7 @@ export const LanguageProvider = ({ children }) => {
 
     // Cleanup
     return () => {
-      delete window.googleTranslateElementInit
+      // Don't delete the callback to prevent re-initialization
     }
   }, [])
 
