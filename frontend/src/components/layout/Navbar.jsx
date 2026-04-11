@@ -179,24 +179,12 @@ const Navbar = () => {
             {/* User Profile */}
             <Link
               to="/profile"
-              className="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity duration-300"
+              className="flex items-center cursor-pointer hover:opacity-80 transition-opacity duration-300"
             >
               <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white font-semibold">
                 {user?.profile?.name?.charAt(0) || 'U'}
               </div>
-              <span className="hidden md:block text-sm font-medium text-gray-700">
-                {user?.profile?.name || 'User'}
-              </span>
             </Link>
-
-            {/* Logout Button */}
-            <button
-              onClick={handleLogout}
-              className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-all duration-300"
-              title="Logout"
-            >
-              <FaSignOutAlt className="w-4 h-4" />
-            </button>
           </div>
         </div>
 

@@ -1,11 +1,16 @@
 import { useAuth } from '../context/AuthContext'
 import { motion } from 'framer-motion'
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaGraduationCap, FaStar, FaAward, FaCalendarAlt, FaEdit, FaArrowLeft } from 'react-icons/fa'
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaGraduationCap, FaStar, FaAward, FaCalendarAlt, FaEdit, FaArrowLeft, FaSignOutAlt } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 
 const ProfilePage = () => {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
 
   if (!user) {
     return (
@@ -27,24 +32,38 @@ const ProfilePage = () => {
   const xpProgress = (currentLevelXP / 1000) * 100
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 py-6">
       <div className="container mx-auto px-4 max-w-5xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-8"
+          className="mb-6"
         >
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center space-x-2 text-gray-600 hover:text-primary-600 transition-colors duration-300 mb-4"
-          >
-            <FaArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-medium">Back</span>
-          </button>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
-          <p className="text-gray-600">View and manage your account details</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center space-x-2 text-gray-600 hover:text-primary-600 transition-colors duration-300 mb-4"
+              >
+                <FaArrowLeft className="w-4 h-4" />
+                <span className="text-sm font-medium">Back</span>
+              </button>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
+              <p className="text-gray-600">View and manage your account details</p>
+            </div>
+
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 hover:shadow-md transition-all duration-300 font-semibold"
+              title="Logout"
+            >
+              <FaSignOutAlt className="w-4 h-4" />
+              <span className="hidden md:block">Logout</span>
+            </button>
+          </div>
         </motion.div>
 
         {/* Profile Overview Card */}

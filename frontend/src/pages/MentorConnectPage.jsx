@@ -132,7 +132,7 @@ const MentorConnectPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-6">
       {/* Success Message */}
       <AnimatePresence>
         {successMessage && (
@@ -152,14 +152,14 @@ const MentorConnectPage = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
+        className="mb-6"
       >
-        <Link to="/dashboard" className="inline-flex items-center space-x-2 text-primary-600 hover:text-primary-700 mb-4">
+        <Link to="/dashboard" className="inline-flex items-center space-x-2 text-primary-600 hover:text-primary-700 mb-3">
           <FaArrowLeft className="w-4 h-4" />
           <span>Back to Dashboard</span>
         </Link>
-        <h1 className="text-4xl font-bold text-gradient mb-2">Connect with Mentors 👥</h1>
-        <p className="text-gray-600 text-lg">Learn from industry experts who guide your career journey</p>
+        <h1 className="text-3xl md:text-4xl font-bold text-gradient mb-2">Connect with Mentors 👥</h1>
+        <p className="text-gray-600">Learn from industry experts who guide your career journey</p>
       </motion.div>
 
       {/* Stats */}
@@ -167,7 +167,7 @@ const MentorConnectPage = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid md:grid-cols-3 gap-6 mb-8"
+        className="grid md:grid-cols-3 gap-4 mb-6"
       >
         <div className="glass-card rounded-2xl p-6 text-center">
           <h3 className="text-4xl font-bold text-gradient mb-2">{mentors.length}+</h3>
