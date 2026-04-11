@@ -96,12 +96,39 @@ export const LanguageProvider = ({ children }) => {
       const script = document.createElement('script')
       script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit'
       script.async = true
+      script.defer = true
       script.onerror = () => {
         console.error('Failed to load Google Translate')
+        setGoogleTranslateReady(false)
+      }
+      script.onload = () => {
+        console.log('Google Translate script loaded')
       }
       document.body.appendChild(script)
     }
 
+<<<<<<< HEAD
+    // Initialize Google Translate callback
+    window.googleTranslateElementInit = () => {
+      console.log('Google Translate initialized')
+      if (window.google && window.google.translate) {
+        try {
+          // Initialize for navbar dropdown
+          new window.google.translate.TranslateElement(
+            {
+              pageLanguage: 'en',
+              includedLanguages: 'en,hi,ta,te,kn,ml,mr,gu,pa,bn,or,as,ur,es,fr,de,pt,zh,ja,ko,ar,ru',
+              autoDisplay: false,
+            },
+            'google_translate_element_nav'
+          )
+          
+          setGoogleTranslateReady(true)
+          console.log('Google Translate widget ready')
+        } catch (error) {
+          console.error('Error initializing Google Translate:', error)
+          setGoogleTranslateReady(false)
+=======
     // Initialize Google Translate callback - define only once
     if (!window.googleTranslateElementInit) {
       window.googleTranslateElementInit = () => {
@@ -124,6 +151,7 @@ export const LanguageProvider = ({ children }) => {
           } catch (error) {
             console.error('Error initializing Google Translate:', error)
           }
+>>>>>>> 54f2a03812145572a078d29637fc475e4f55d0a0
         }
       }
     }
@@ -133,12 +161,24 @@ export const LanguageProvider = ({ children }) => {
       window.googleTranslateInitialized = true
       setGoogleTranslateReady(true)
     } else {
+<<<<<<< HEAD
+      // Wait a bit before adding script
+      const timer = setTimeout(() => {
+        addGoogleTranslateScript()
+      }, 500)
+      
+      return () => {
+        clearTimeout(timer)
+        delete window.googleTranslateElementInit
+      }
+=======
       addGoogleTranslateScript()
     }
 
     // Cleanup
     return () => {
       // Don't delete the callback to prevent re-initialization
+>>>>>>> 54f2a03812145572a078d29637fc475e4f55d0a0
     }
   }, [])
 
