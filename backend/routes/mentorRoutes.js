@@ -1,17 +1,27 @@
 const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/auth');
+const {
+  getAllMentors,
+  getMentorDetails,
+  bookSession,
+  sendMessage,
+  getMentorReviews,
+} = require('../controllers/mentorController');
 
-router.get('/', protect, (req, res) => {
-  res.json({ success: true, message: 'Find mentors' });
-});
+// Get all mentors
+router.get('/', protect, getAllMentors);
 
-router.post('/match', protect, (req, res) => {
-  res.json({ success: true, message: 'Get mentor matches' });
-});
+// Get mentor details
+router.get('/:id', protect, getMentorDetails);
 
-router.post('/request', protect, (req, res) => {
-  res.json({ success: true, message: 'Request mentorship' });
-});
+// Get mentor reviews
+router.get('/:id/reviews', getMentorReviews);
+
+// Book a session
+router.post('/:id/book', protect, bookSession);
+
+// Send message
+router.post('/:id/message', protect, sendMessage);
 
 module.exports = router;
