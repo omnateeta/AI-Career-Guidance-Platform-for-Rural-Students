@@ -178,14 +178,17 @@ const Navbar = () => {
             </button>
 
             {/* User Profile */}
-            <div className="flex items-center space-x-3">
+            <Link
+              to="/profile"
+              className="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity duration-300"
+            >
               <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white font-semibold">
                 {user?.profile?.name?.charAt(0) || 'U'}
               </div>
               <span className="hidden md:block text-sm font-medium text-gray-700">
                 {user?.profile?.name || 'User'}
               </span>
-            </div>
+            </Link>
 
             {/* Logout Button */}
             <button
