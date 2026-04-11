@@ -2,11 +2,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../context/ThemeContext'
 import { motion, AnimatePresence } from 'framer-motion'
-<<<<<<< HEAD
-import { FaHome, FaBriefcase, FaChartLine, FaBook, FaUsers, FaComments, FaSignOutAlt, FaGlobe, FaChevronDown } from 'react-icons/fa'
-=======
 import { FaHome, FaBriefcase, FaChartLine, FaBook, FaUsers, FaComments, FaSignOutAlt, FaLanguage, FaWifi, FaGlobe, FaChevronDown, FaMapSigns } from 'react-icons/fa'
->>>>>>> 54f2a03812145572a078d29637fc475e4f55d0a0
+import { useLanguage } from '../../context/LanguageContext'
 import { useState } from 'react'
 
 const Navbar = () => {
@@ -15,17 +12,9 @@ const Navbar = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false)
+  const { t } = useLanguage();
 
   const navItems = [
-<<<<<<< HEAD
-    { path: '/dashboard', label: 'Dashboard', icon: FaHome },
-    { path: '/careers', label: 'Careers', icon: FaChartLine },
-    { path: '/skills', label: 'Skills', icon: FaBook },
-    { path: '/learning', label: 'Learning', icon: FaBook },
-    { path: '/jobs', label: 'Jobs', icon: FaBriefcase },
-    { path: '/mentors', label: 'Mentors', icon: FaUsers },
-    { path: '/chat', label: 'Chat with AI', icon: FaComments },
-=======
     { path: '/dashboard', icon: FaHome, label: t('dashboard') || 'Dashboard' },
     { path: '/career-guidance', icon: FaMapSigns, label: 'Career Guidance' },
     { path: '/career-quiz', icon: FaChartLine, label: 'Career Quiz' },
@@ -35,7 +24,6 @@ const Navbar = () => {
     { path: '/jobs', icon: FaBriefcase, label: t('jobs') || 'Jobs' },
     { path: '/mentors', icon: FaUsers, label: t('mentors') || 'Mentors' },
     { path: '/chat', icon: FaComments, label: t('chat') || 'Chat' },
->>>>>>> 54f2a03812145572a078d29637fc475e4f55d0a0
   ]
 
   const handleLogout = () => {
@@ -51,13 +39,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/dashboard" className="flex items-center space-x-2">
-<<<<<<< HEAD
-            <div className="w-10 h-10 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">M</span>
-            </div>
-=======
             <img src="/logo.jpg" alt="Margdarshak AI Logo" className="h-10 w-auto rounded-lg" />
->>>>>>> 54f2a03812145572a078d29637fc475e4f55d0a0
             <span className="text-xl font-bold text-gradient hidden md:block">Margdarshak AI</span>
           </Link>
 
