@@ -17,6 +17,7 @@ import ChatbotPage from './pages/ChatbotPage'
 import CareerDiscoveryQuiz from './pages/CareerDiscoveryQuiz'
 import ProfilePage from './pages/ProfilePage'
 import ProfileEditPage from './pages/ProfileEditPage'
+import CareerGuidanceFlow from './pages/CareerGuidanceFlow'
 
 // Components
 import ProtectedRoute from './components/auth/ProtectedRoute'
@@ -54,6 +55,7 @@ function App() {
             <Route path="/chat" element={<ChatbotPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/profile/edit" element={<ProfileEditPage />} />
+            <Route path="/career-guidance" element={<CareerGuidanceFlow />} />
           </Route>
 
           {/* 404 */}

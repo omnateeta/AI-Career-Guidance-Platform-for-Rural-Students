@@ -1,8 +1,16 @@
-import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
-import { FaArrowLeft, FaCheckCircle, FaCircle, FaBook, FaVideo, FaClock, FaTrophy } from 'react-icons/fa'
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { 
+  FaArrowLeft, FaCheckCircle, FaCircle, FaBook, FaVideo, 
+  FaClock, FaTrophy, FaPlay, FaExternalLinkAlt, FaYoutube,
+  FaSpinner, FaStar, FaEye
+} from 'react-icons/fa';
 
 const LearningPathPage = () => {
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [videoLoading, setVideoLoading] = useState(false);
+
   const learningPath = {
     career: 'Software Engineer',
     title: 'Complete Software Engineering Roadmap',
@@ -16,10 +24,26 @@ const LearningPathPage = () => {
         duration: '2 weeks',
         skills: ['HTML5', 'CSS3', 'Responsive Design'],
         completed: true,
-        resources: [
-          { title: 'HTML Full Course', platform: 'freeCodeCamp', type: 'video', duration: '2 hours', free: true },
-          { title: 'CSS Crash Course', platform: 'Traversy Media', type: 'video', duration: '1.5 hours', free: true },
-        ],
+        youtubeVideos: [
+          {
+            id: 'qz0aGYrrlhU',
+            title: 'HTML & CSS Full Course - Build a Website',
+            channel: 'freeCodeCamp',
+            views: '15M views',
+            duration: '2:03:45',
+            rating: 4.9,
+            thumbnail: 'https://img.youtube.com/vi/qz0aGYrrlhU/maxresdefault.jpg'
+          },
+          {
+            id: 'mU6anWqZJcc',
+            title: 'CSS Full Course - 2024 Edition',
+            channel: 'Traversy Media',
+            views: '8.5M views',
+            duration: '1:32:18',
+            rating: 4.8,
+            thumbnail: 'https://img.youtube.com/vi/mU6anWqZJcc/maxresdefault.jpg'
+          }
+        ]
       },
       {
         stepNumber: 2,
@@ -28,10 +52,26 @@ const LearningPathPage = () => {
         duration: '4 weeks',
         skills: ['ES6+', 'DOM', 'Async/Await'],
         completed: true,
-        resources: [
-          { title: 'JavaScript Algorithms', platform: 'freeCodeCamp', type: 'course', duration: '300 hours', free: true },
-          { title: 'JS Info', platform: 'javascript.info', type: 'article', duration: 'Self-paced', free: true },
-        ],
+        youtubeVideos: [
+          {
+            id: 'PkZNo7MFNFg',
+            title: 'JavaScript Tutorial for Beginners - Full Course',
+            channel: 'Programming with Mosh',
+            views: '22M views',
+            duration: '3:06:23',
+            rating: 4.9,
+            thumbnail: 'https://img.youtube.com/vi/PkZNo7MFNFg/maxresdefault.jpg'
+          },
+          {
+            id: 'W6NZfCO5SIk',
+            title: 'JavaScript Programming - Full Course',
+            channel: 'freeCodeCamp',
+            views: '12M views',
+            duration: '7:45:12',
+            rating: 4.9,
+            thumbnail: 'https://img.youtube.com/vi/W6NZfCO5SIk/maxresdefault.jpg'
+          }
+        ]
       },
       {
         stepNumber: 3,
@@ -41,10 +81,26 @@ const LearningPathPage = () => {
         skills: ['Components', 'Hooks', 'State Management'],
         completed: false,
         current: true,
-        resources: [
-          { title: 'React Official Tutorial', platform: 'react.dev', type: 'course', duration: 'Self-paced', free: true },
-          { title: 'React Course 2024', platform: 'YouTube', type: 'video', duration: '8 hours', free: true },
-        ],
+        youtubeVideos: [
+          {
+            id: 'nJcWLzMq1oU',
+            title: 'React Course 2024 - Build 4 Real Projects',
+            channel: 'Dave Gray',
+            views: '5.2M views',
+            duration: '8:15:30',
+            rating: 4.9,
+            thumbnail: 'https://img.youtube.com/vi/nJcWLzMq1oU/maxresdefault.jpg'
+          },
+          {
+            id: 'SqcY0GlETPk',
+            title: 'React Tutorial for Beginners',
+            channel: 'Programming with Mosh',
+            views: '9.8M views',
+            duration: '2:25:44',
+            rating: 4.8,
+            thumbnail: 'https://img.youtube.com/vi/SqcY0GlETPk/maxresdefault.jpg'
+          }
+        ]
       },
       {
         stepNumber: 4,
@@ -53,10 +109,26 @@ const LearningPathPage = () => {
         duration: '6 weeks',
         skills: ['Express', 'REST APIs', 'MongoDB'],
         completed: false,
-        resources: [
-          { title: 'Node.js & Express', platform: 'Coursera', type: 'course', duration: '6 weeks', free: false },
-          { title: 'Node.js Tutorial', platform: 'YouTube', type: 'video', duration: '5 hours', free: true },
-        ],
+        youtubeVideos: [
+          {
+            id: 'Oe421EPjeBE',
+            title: 'Node.js & Express.js Full Course',
+            channel: 'freeCodeCamp',
+            views: '7.3M views',
+            duration: '8:16:48',
+            rating: 4.8,
+            thumbnail: 'https://img.youtube.com/vi/Oe421EPjeBE/maxresdefault.jpg'
+          },
+          {
+            id: 'TlB_eWDSMt4',
+            title: 'Node.js Tutorial for Beginners',
+            channel: 'Programming with Mosh',
+            views: '11M views',
+            duration: '1:43:28',
+            rating: 4.9,
+            thumbnail: 'https://img.youtube.com/vi/TlB_eWDSMt4/maxresdefault.jpg'
+          }
+        ]
       },
       {
         stepNumber: 5,
@@ -65,9 +137,17 @@ const LearningPathPage = () => {
         duration: '3 weeks',
         skills: ['Types', 'Interfaces', 'Generics'],
         completed: false,
-        resources: [
-          { title: 'TypeScript Full Course', platform: 'YouTube', type: 'video', duration: '4 hours', free: true },
-        ],
+        youtubeVideos: [
+          {
+            id: 'BCg4U1Fz2s8',
+            title: 'TypeScript Course for Beginners 2024',
+            channel: 'Programming with Mosh',
+            views: '4.5M views',
+            duration: '1:58:32',
+            rating: 4.8,
+            thumbnail: 'https://img.youtube.com/vi/BCg4U1Fz2s8/maxresdefault.jpg'
+          }
+        ]
       },
       {
         stepNumber: 6,
@@ -76,12 +156,26 @@ const LearningPathPage = () => {
         duration: '4 weeks',
         skills: ['Real-world Apps', 'Git', 'Deployment'],
         completed: false,
-        resources: [
-          { title: 'Project Ideas', platform: 'GitHub', type: 'article', duration: 'Self-paced', free: true },
-        ],
+        youtubeVideos: [
+          {
+            id: '85fSjKdEj7o',
+            title: 'Build 5 JavaScript Projects for Portfolio',
+            channel: 'Web Dev Simplified',
+            views: '3.2M views',
+            duration: '3:45:20',
+            rating: 4.7,
+            thumbnail: 'https://img.youtube.com/vi/85fSjKdEj7o/maxresdefault.jpg'
+          }
+        ]
       },
     ],
-  }
+  };
+
+  const openVideo = (video) => {
+    setVideoLoading(true);
+    setSelectedVideo(video);
+    setTimeout(() => setVideoLoading(false), 1000);
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -96,7 +190,9 @@ const LearningPathPage = () => {
           <span>Back to Dashboard</span>
         </Link>
         <h1 className="text-4xl font-bold text-gradient mb-2">Your Learning Path 📚</h1>
-        <p className="text-gray-600 text-lg">Personalized roadmap to become a <span className="font-semibold text-primary-600">{learningPath.career}</span></p>
+        <p className="text-gray-600 text-lg">
+          Personalized roadmap to become a <span className="font-semibold text-primary-600">{learningPath.career}</span>
+        </p>
       </motion.div>
 
       {/* Progress Overview */}
@@ -132,6 +228,87 @@ const LearningPathPage = () => {
         </div>
       </motion.div>
 
+      {/* Video Player Modal */}
+      <AnimatePresence>
+        {selectedVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+            onClick={() => setSelectedVideo(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.8, y: 50 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.8, y: 50 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto"
+            >
+              {/* Video Header */}
+              <div className="p-4 border-b flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">{selectedVideo.title}</h3>
+                  <p className="text-sm text-gray-600 mt-1">{selectedVideo.channel}</p>
+                </div>
+                <button
+                  onClick={() => setSelectedVideo(null)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Video Player */}
+              <div className="relative bg-black aspect-video">
+                {videoLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
+                    <FaSpinner className="animate-spin text-5xl text-primary-600" />
+                  </div>
+                )}
+                <iframe
+                  src={`https://www.youtube.com/embed/${selectedVideo.id}?autoplay=1&rel=0`}
+                  title={selectedVideo.title}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  onLoad={() => setVideoLoading(false)}
+                />
+              </div>
+
+              {/* Video Info */}
+              <div className="p-6">
+                <div className="flex items-center space-x-6 mb-4">
+                  <div className="flex items-center space-x-2">
+                    <FaEye className="text-gray-600" />
+                    <span className="text-sm text-gray-700">{selectedVideo.views}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <FaStar className="text-yellow-500" />
+                    <span className="text-sm font-semibold">{selectedVideo.rating}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <FaClock className="text-gray-600" />
+                    <span className="text-sm text-gray-700">{selectedVideo.duration}</span>
+                  </div>
+                </div>
+                
+                <a
+                  href={`https://www.youtube.com/watch?v=${selectedVideo.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold"
+                >
+                  <FaYoutube />
+                  <span>Watch on YouTube</span>
+                  <FaExternalLinkAlt className="text-xs" />
+                </a>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Learning Steps */}
       <div className="space-y-6">
         {learningPath.steps.map((step, index) => (
@@ -160,69 +337,107 @@ const LearningPathPage = () => {
 
               {/* Content */}
               <div className="flex-1">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">{step.title}</h3>
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
-                      <span className="flex items-center space-x-1">
-                        <FaClock />
-                        <span>{step.duration}</span>
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h3>
+                  <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
+                    <span className="flex items-center space-x-1">
+                      <FaClock />
+                      <span>{step.duration}</span>
+                    </span>
+                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">
+                      {step.type}
+                    </span>
+                    {step.current && (
+                      <span className="px-2 py-1 bg-primary-100 text-primary-700 rounded text-xs font-semibold animate-pulse">
+                        Current Step
                       </span>
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">
-                        {step.type}
+                    )}
+                  </div>
+
+                  {/* Skills */}
+                  <div className="flex flex-wrap gap-2">
+                    {step.skills.map((skill, idx) => (
+                      <span key={idx} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
+                        {skill}
                       </span>
-                      {step.current && (
-                        <span className="px-2 py-1 bg-primary-100 text-primary-700 rounded text-xs font-semibold animate-pulse">
-                          Current Step
-                        </span>
-                      )}
-                    </div>
+                    ))}
                   </div>
                 </div>
 
-                {/* Skills */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {step.skills.map((skill, idx) => (
-                    <span key={idx} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Resources */}
-                <div className="space-y-2">
-                  <h4 className="text-sm font-semibold text-gray-700 flex items-center space-x-2">
-                    <FaBook className="text-primary-600" />
-                    <span>Recommended Resources:</span>
+                {/* Top YouTube Videos Section */}
+                <div className="mt-6">
+                  <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center space-x-2">
+                    <FaYoutube className="text-red-600" />
+                    <span>Top Free Video Tutorials</span>
+                    <span className="text-xs text-gray-500 font-normal">(Most Viewed)</span>
                   </h4>
-                  {step.resources.map((resource, idx) => (
-                    <a
-                      key={idx}
-                      href="#"
-                      className="flex items-center justify-between p-3 bg-white rounded-lg hover:shadow-md transition-all duration-300"
-                    >
-                      <div className="flex items-center space-x-3">
-                        {resource.type === 'video' && <FaVideo className="text-red-500" />}
-                        {resource.type === 'course' && <FaBook className="text-blue-500" />}
-                        <div>
-                          <p className="text-sm font-semibold text-gray-900">{resource.title}</p>
-                          <p className="text-xs text-gray-600">{resource.platform} • {resource.duration}</p>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {step.youtubeVideos.map((video, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="group cursor-pointer"
+                        onClick={() => openVideo(video)}
+                      >
+                        {/* Video Thumbnail */}
+                        <div className="relative rounded-xl overflow-hidden mb-3 shadow-lg group-hover:shadow-xl transition-shadow">
+                          <img
+                            src={video.thumbnail}
+                            alt={video.title}
+                            className="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          
+                          {/* Play Button Overlay */}
+                          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center">
+                            <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+                              <FaPlay className="text-white text-2xl ml-1" />
+                            </div>
+                          </div>
+
+                          {/* Duration Badge */}
+                          <div className="absolute bottom-2 right-2 bg-black/90 text-white px-2 py-1 rounded text-xs font-semibold">
+                            {video.duration}
+                          </div>
+
+                          {/* Top Rated Badge */}
+                          {idx === 0 && (
+                            <div className="absolute top-2 left-2 bg-yellow-500 text-white px-2 py-1 rounded text-xs font-bold flex items-center space-x-1">
+                              <FaStar />
+                              <span>#1 Top Rated</span>
+                            </div>
+                          )}
                         </div>
-                      </div>
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        resource.free ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                      }`}>
-                        {resource.free ? 'Free' : 'Paid'}
-                      </span>
-                    </a>
-                  ))}
+
+                        {/* Video Info */}
+                        <div>
+                          <h5 className="font-bold text-gray-900 mb-1 line-clamp-2 group-hover:text-primary-600 transition-colors">
+                            {video.title}
+                          </h5>
+                          <p className="text-sm text-gray-600 mb-2">{video.channel}</p>
+                          <div className="flex items-center space-x-3 text-xs text-gray-500">
+                            <span className="flex items-center space-x-1">
+                              <FaEye />
+                              <span>{video.views}</span>
+                            </span>
+                            <span className="flex items-center space-x-1">
+                              <FaStar className="text-yellow-500" />
+                              <span>{video.rating}</span>
+                            </span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Action Button */}
                 {!step.completed && (
-                  <button className="mt-4 px-6 py-2 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 font-semibold flex items-center space-x-2">
+                  <button className="mt-6 px-6 py-3 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 font-semibold flex items-center space-x-2">
                     <FaTrophy className="w-4 h-4" />
-                    <span>{step.completed ? 'Completed ✓' : step.current ? 'Continue Learning' : 'Start Step'}</span>
+                    <span>{step.current ? 'Continue Learning' : 'Start Step'}</span>
                   </button>
                 )}
               </div>
@@ -240,11 +455,11 @@ const LearningPathPage = () => {
       >
         <h3 className="text-2xl font-bold mb-2">🎯 Keep Going!</h3>
         <p className="text-gray-600">
-          You're making great progress. Complete one step at a time and you'll reach your goal!
+          You're making great progress. Watch the top-rated videos and complete one step at a time!
         </p>
       </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default LearningPathPage
+export default LearningPathPage;

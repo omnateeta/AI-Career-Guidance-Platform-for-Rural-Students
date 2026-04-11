@@ -1,15 +1,28 @@
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useEffect, useContext } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { FaArrowLeft, FaMapMarkerAlt, FaRupeeSign, FaClock, FaBookmark, FaExternalLinkAlt, FaSearch, FaFilter } from 'react-icons/fa'
+import axios from 'axios'
+import { AuthContext } from '../context/AuthContext'
+import { 
+  FaArrowLeft, FaMapMarkerAlt, FaRupeeSign, FaClock, FaBookmark, 
+  FaExternalLinkAlt, FaSearch, FaFilter, FaCheck, FaSpinner,
+  FaTimes, FaBuilding, FaBriefcase
+} from 'react-icons/fa'
 
 const JobFeedPage = () => {
+  const { token, user } = useContext(AuthContext)
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('All')
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(1)
   const [error, setError] = useState(null)
+  const [savedJobs, setSavedJobs] = useState(new Set())
+  const [appliedJobs, setAppliedJobs] = useState(new Set())
+  const [showApplyModal, setShowApplyModal] = useState(false)
+  const [selectedJob, setSelectedJob] = useState(null)
+  const [applyLoading, setApplyLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState(null)
 
   // Demo jobs data (fallback when API is not available)
   const demoJobs = [
@@ -105,6 +118,52 @@ const JobFeedPage = () => {
     },
   ]
 
+  const toggleSaveJob = (jobId) => {
+    setSavedJobs(prev => {
+      const newSaved = new Set(prev)
+      if (newSaved.has(jobId)) {
+        newSaved.delete(jobId)
+        setSuccessMessage('Job removed from saved list')
+      } else {
+        newSaved.add(jobId)
+        setSuccessMessage('Job saved successfully!')
+      }
+      return newSaved
+    })
+    setTimeout(() => setSuccessMessage(null), 3000)
+  }
+
+  const handleApplyNow = (job) => {
+    setSelectedJob(job)
+    setShowApplyModal(true)
+  }
+
+  const submitApplication = async () => {
+    if (!selectedJob) return
+    
+    setApplyLoading(true)
+    
+    try {
+      // In a real app, you'd send this to the backend
+      // await axios.post(`/api/jobs/${selectedJob.id}/apply`, applicationData, {
+      //   headers: { Authorization: `Bearer ${token}` }
+      // })
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      setAppliedJobs(prev => new Set([...prev, selectedJob.id]))
+      setShowApplyModal(false)
+      setSuccessMessage('Application submitted successfully! 🎉')
+      setTimeout(() => setSuccessMessage(null), 5000)
+    } catch (error) {
+      console.error('Error applying:', error)
+      alert('Failed to submit application. Please try again.')
+    } finally {
+      setApplyLoading(false)
+    }
+  }
+
   useEffect(() => {
     fetchJobs()
   }, [filter, page])
@@ -154,6 +213,21 @@ const JobFeedPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Success Message */}
+      <AnimatePresence>
+        {successMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2"
+          >
+            <FaCheck />
+            <span>{successMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -267,8 +341,16 @@ const JobFeedPage = () => {
                 </div>
               </div>
               <div className="flex space-x-2">
-                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                  <FaBookmark className="text-gray-600" />
+                <button 
+                  onClick={() => toggleSaveJob(job.id)}
+                  className={`p-2 rounded-lg transition-all duration-300 ${
+                    savedJobs.has(job.id) 
+                      ? 'bg-yellow-100 hover:bg-yellow-200' 
+                      : 'hover:bg-gray-100'
+                  }`}
+                  title={savedJobs.has(job.id) ? 'Remove from saved' : 'Save this job'}
+                >
+                  <FaBookmark className={savedJobs.has(job.id) ? 'text-yellow-600' : 'text-gray-600'} />
                 </button>
               </div>
             </div>
@@ -313,12 +395,37 @@ const JobFeedPage = () => {
             </div>
 
             <div className="flex space-x-3">
-              <button className="flex-1 px-4 py-2 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 font-semibold flex items-center justify-center space-x-2">
-                <span>Apply Now</span>
-                <FaExternalLinkAlt className="w-3 h-3" />
+              <button 
+                onClick={() => handleApplyNow(job)}
+                disabled={appliedJobs.has(job.id)}
+                className={`flex-1 px-4 py-2 rounded-lg font-semibold flex items-center justify-center space-x-2 transition-all duration-300 ${
+                  appliedJobs.has(job.id)
+                    ? 'bg-green-500 text-white cursor-default'
+                    : 'bg-gradient-to-r from-primary-600 to-secondary-600 text-white hover:shadow-lg'
+                }`}
+              >
+                {appliedJobs.has(job.id) ? (
+                  <>
+                    <FaCheck />
+                    <span>Applied ✓</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Apply Now</span>
+                    <FaExternalLinkAlt className="w-3 h-3" />
+                  </>
+                )}
               </button>
-              <button className="px-4 py-2 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-300 font-semibold">
-                Save
+              <button 
+                onClick={() => toggleSaveJob(job.id)}
+                className={`px-4 py-2 border-2 rounded-lg font-semibold transition-all duration-300 flex items-center space-x-2 ${
+                  savedJobs.has(job.id)
+                    ? 'border-yellow-500 bg-yellow-50 text-yellow-700'
+                    : 'border-gray-300 hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <FaBookmark className={savedJobs.has(job.id) ? 'text-yellow-600' : 'text-gray-600'} />
+                <span>{savedJobs.has(job.id) ? 'Saved' : 'Save'}</span>
               </button>
             </div>
           </motion.div>
@@ -341,6 +448,165 @@ const JobFeedPage = () => {
       </motion.div>
         </>
       )}
+
+      {/* Application Modal */}
+      <AnimatePresence>
+        {showApplyModal && selectedJob && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            onClick={() => setShowApplyModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-gray-900">Apply for Position</h3>
+                <button
+                  onClick={() => setShowApplyModal(false)}
+                  className="text-gray-500 hover:text-gray-700 transition-colors"
+                >
+                  <FaTimes className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Job Info */}
+              <div className="mb-6 p-4 bg-gradient-to-r from-primary-50 to-secondary-50 rounded-xl">
+                <div className="flex items-start space-x-3">
+                  <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                    {selectedJob.company.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-lg">{selectedJob.title}</h4>
+                    <p className="text-gray-600 flex items-center space-x-1">
+                      <FaBuilding className="text-sm" />
+                      <span>{selectedJob.company}</span>
+                    </p>
+                    <p className="text-gray-600 flex items-center space-x-1 text-sm">
+                      <FaMapMarkerAlt className="text-sm" />
+                      <span>{selectedJob.location}</span>
+                    </p>
+                    <p className="text-green-600 font-semibold text-sm mt-1 flex items-center space-x-1">
+                      <FaRupeeSign />
+                      <span>₹{selectedJob.salary.min}-{selectedJob.salary.max} LPA</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Application Form */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    defaultValue={user?.profile?.name || ''}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="Enter your full name"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    defaultValue={user?.email || ''}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="your@email.com"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Phone Number *
+                  </label>
+                  <input
+                    type="tel"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="+91 XXXXX XXXXX"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Resume/CV Link (Optional)
+                  </label>
+                  <input
+                    type="url"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="https://drive.google.com/your-resume"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Upload your resume to Google Drive and paste the link here</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Cover Letter (Optional)
+                  </label>
+                  <textarea
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="Tell us why you're a great fit for this position..."
+                  />
+                </div>
+
+                <div className="flex items-start space-x-2">
+                  <input
+                    type="checkbox"
+                    id="confirmAccuracy"
+                    className="mt-1 w-4 h-4 text-primary-600 rounded"
+                    required
+                  />
+                  <label htmlFor="confirmAccuracy" className="text-sm text-gray-700">
+                    I confirm that all the information provided is accurate and complete *
+                  </label>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex space-x-3 pt-4">
+                  <button
+                    onClick={() => setShowApplyModal(false)}
+                    className="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300 font-semibold"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={submitApplication}
+                    disabled={applyLoading}
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 font-semibold flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {applyLoading ? (
+                      <>
+                        <FaSpinner className="animate-spin" />
+                        <span>Submitting...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FaBriefcase />
+                        <span>Submit Application</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
