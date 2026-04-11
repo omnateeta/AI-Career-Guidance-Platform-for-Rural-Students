@@ -54,12 +54,42 @@ const jobListingSchema = new mongoose.Schema({
     enum: ['full-time', 'part-time', 'contract', 'internship', 'freelance'],
     default: 'full-time',
   },
+  jobSource: {
+    type: String,
+    enum: ['private', 'government'],
+    required: true,
+    default: 'private',
+  },
+  apiSource: {
+    type: String, // 'adzuna', 'data.gov.in', 'freejobalert', 'employmentnews'
+  },
   experienceLevel: {
     type: String,
     enum: ['entry', 'mid', 'senior', 'executive'],
     default: 'entry',
   },
   educationRequired: String,
+  department: { // For government jobs
+    type: String,
+  },
+  qualification: { // For government jobs
+    type: String,
+  },
+  vacancies: { // Number of openings (for govt jobs)
+    type: Number,
+  },
+  ageLimit: {
+    min: Number,
+    max: Number,
+  },
+  lastDate: { // Application deadline (for govt jobs)
+    type: Date,
+  },
+  matchScore: { // AI-calculated match score (0-100)
+    type: Number,
+    min: 0,
+    max: 100,
+  },
   source: {
     type: String,
     default: 'manual',
@@ -99,6 +129,11 @@ jobListingSchema.index({ postedDate: -1 });
 jobListingSchema.index({ jobType: 1, experienceLevel: 1 });
 jobListingSchema.index({ geoLocation: '2dsphere' });
 jobListingSchema.index({ isActive: 1, postedDate: -1 });
+jobListingSchema.index({ jobSource: 1, isActive: 1 });
+jobListingSchema.index({ apiSource: 1 });
+jobListingSchema.index({ department: 1 });
+jobListingSchema.index({ lastDate: 1 });
+jobListingSchema.index({ matchScore: -1 });
 
 // Increment views
 jobListingSchema.methods.incrementViews = function() {

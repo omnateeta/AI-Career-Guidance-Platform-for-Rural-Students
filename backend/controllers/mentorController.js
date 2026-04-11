@@ -247,6 +247,10 @@ exports.getMentorReviews = async (req, res) => {
 
 // Helper function to get next available slot
 function getNextAvailableSlot(availability) {
+  if (!availability || !availability.availableHours || availability.availableHours.length === 0) {
+    return null;
+  }
+
   if (availability.status !== 'available') {
     return null;
   }
@@ -263,7 +267,7 @@ function getNextAvailableSlot(availability) {
     const todayIndex = days.indexOf(currentDay);
 
     if (dayIndex >= todayIndex) {
-      const dayName = slot.day.charAt(0).toUpperCase() + slot.day.day.slice(1);
+      const dayName = slot.day.charAt(0).toUpperCase() + slot.day.slice(1);
       if (dayIndex === todayIndex) {
         return `Today, ${slot.startTime}`;
       } else if (dayIndex === todayIndex + 1) {

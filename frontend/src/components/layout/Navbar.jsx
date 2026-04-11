@@ -23,6 +23,7 @@ const Navbar = () => {
     { path: '/learning', icon: FaBook, label: t('learning') || 'Learning' },
     { path: '/jobs', icon: FaBriefcase, label: t('jobs') || 'Jobs' },
     { path: '/mentors', icon: FaUsers, label: t('mentors') || 'Mentors' },
+    { path: '/communicate', icon: FaComments, label: 'Communicate Assist' },
     { path: '/chat', icon: FaComments, label: t('chat') || 'Chat' },
   ]
 

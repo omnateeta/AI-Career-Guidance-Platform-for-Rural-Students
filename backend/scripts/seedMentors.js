@@ -7,13 +7,18 @@ require('dotenv').config();
 const sampleMentors = [
   {
     user: {
-      name: 'Rajesh Kumar',
-      email: 'rajesh.kumar@mentor.com',
+      name: 'Mahammad Aftab',
+      email: 'mahammad@mentor.com',
       password: 'mentor123',
       role: 'mentor',
       profile: {
+        name: 'Mahammad Aftab',
         avatar: '👨‍💻',
-        location: 'Bangalore, Karnataka'
+        location: {
+          district: 'Bangalore',
+          state: 'Karnataka',
+          country: 'India'
+        }
       }
     },
     mentor: {
@@ -23,7 +28,7 @@ const sampleMentors = [
         yearsOfExperience: 12,
         currentRole: 'Senior Software Engineer',
         currentCompany: 'Google',
-        linkedIn: 'https://linkedin.com/in/rajeshkumar'
+        linkedIn: 'https://linkedin.com/in/mahammad-aftab'
       },
       expertise: ['System Design', 'Career Growth', 'Tech Interviews', 'JavaScript', 'React', 'Node.js'],
       industries: ['Technology', 'Software Development', 'Cloud Computing'],
@@ -60,13 +65,18 @@ const sampleMentors = [
   },
   {
     user: {
-      name: 'Priya Sharma',
-      email: 'priya.sharma@mentor.com',
+      name: 'Omnateeta ',
+      email: 'Omnateeta@mentor.com',
       password: 'mentor123',
       role: 'mentor',
       profile: {
+        name: 'Omnateeta',
         avatar: '👩‍💻',
-        location: 'Pune, Maharashtra'
+        location: {
+          district: 'Pune',
+          state: 'Maharashtra',
+          country: 'India'
+        }
       }
     },
     mentor: {
@@ -76,7 +86,7 @@ const sampleMentors = [
         yearsOfExperience: 8,
         currentRole: 'Data Scientist',
         currentCompany: 'Microsoft',
-        linkedIn: 'https://linkedin.com/in/priyasharma'
+        linkedIn: 'https://linkedin.com/in/omnateeta'
       },
       expertise: ['Machine Learning', 'Data Science', 'Python', 'Statistics', 'Deep Learning', 'AI Ethics'],
       industries: ['Technology', 'Healthcare', 'Finance', 'E-commerce'],
@@ -117,8 +127,13 @@ const sampleMentors = [
       password: 'mentor123',
       role: 'mentor',
       profile: {
+        name: 'Amit Patel',
         avatar: '👨‍💼',
-        location: 'Mumbai, Maharashtra'
+        location: {
+          district: 'Mumbai',
+          state: 'Maharashtra',
+          country: 'India'
+        }
       }
     },
     mentor: {
@@ -163,8 +178,13 @@ const sampleMentors = [
       password: 'mentor123',
       role: 'mentor',
       profile: {
+        name: 'Sneha Reddy',
         avatar: '👩‍🎨',
-        location: 'Hyderabad, Telangana'
+        location: {
+          district: 'Hyderabad',
+          state: 'Telangana',
+          country: 'India'
+        }
       }
     },
     mentor: {
@@ -222,8 +242,13 @@ const sampleMentors = [
       password: 'mentor123',
       role: 'mentor',
       profile: {
+        name: 'Dr. Vikram Singh',
         avatar: '👨‍🏫',
-        location: 'Delhi, NCR'
+        location: {
+          district: 'Delhi',
+          state: 'Delhi',
+          country: 'India'
+        }
       }
     },
     mentor: {
@@ -274,8 +299,13 @@ const sampleMentors = [
       password: 'mentor123',
       role: 'mentor',
       profile: {
+        name: 'Ananya Iyer',
         avatar: '👩‍🔬',
-        location: 'Chennai, Tamil Nadu'
+        location: {
+          district: 'Chennai',
+          state: 'Tamil Nadu',
+          country: 'India'
+        }
       }
     },
     mentor: {

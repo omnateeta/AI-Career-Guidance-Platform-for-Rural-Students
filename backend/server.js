@@ -20,6 +20,10 @@ const skillRoutes = require('./routes/skillRoutes');
 const learningRoutes = require('./routes/learningRoutes');
 const jobRoutes = require('./routes/jobRoutes');
 const mentorRoutes = require('./routes/mentorRoutes');
+const communicationRoutes = require('./routes/communicationRoutes');
+
+// Import scheduled jobs
+const { startScheduledJobs } = require('./jobs/scheduleJobs');
 
 // Initialize Express app
 const app = express();
@@ -80,6 +84,7 @@ app.use('/api/skills', skillRoutes);
 app.use('/api/learning', learningRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/mentors', mentorRoutes);
+app.use('/api/ai', communicationRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -146,6 +151,11 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   logger.info(`🚀 Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
   logger.info(`📡 API available at http://localhost:${PORT}/api`);
+  
+  // Start scheduled jobs
+  if (process.env.NODE_ENV !== 'test') {
+    startScheduledJobs();
+  }
 });
 
 // Handle unhandled promise rejections

@@ -18,6 +18,7 @@ import CareerDiscoveryQuiz from './pages/CareerDiscoveryQuiz'
 import ProfilePage from './pages/ProfilePage'
 import ProfileEditPage from './pages/ProfileEditPage'
 import CareerGuidanceFlow from './pages/CareerGuidanceFlow'
+import CommunicationAssistPage from './pages/CommunicationAssistPage'
 
 // Components
 import ProtectedRoute from './components/auth/ProtectedRoute'
@@ -52,6 +53,7 @@ function App() {
             <Route path="/learning" element={<LearningPathPage />} />
             <Route path="/jobs" element={<JobFeedPage />} />
             <Route path="/mentors" element={<MentorConnectPage />} />
+            <Route path="/communicate" element={<CommunicationAssistPage />} />
             <Route path="/chat" element={<ChatbotPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/profile/edit" element={<ProfileEditPage />} />
