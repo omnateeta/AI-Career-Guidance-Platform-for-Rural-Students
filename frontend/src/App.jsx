@@ -1,0 +1,63 @@
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { useAuth } from './context/AuthContext'
+import { motion, AnimatePresence } from 'framer-motion'
+
+// Pages
+import LandingPage from './pages/LandingPage'
+import LoginPage from './pages/auth/LoginPage'
+import RegisterPage from './pages/auth/RegisterPage'
+import DashboardPage from './pages/DashboardPage'
+import OnboardingPage from './pages/OnboardingPage'
+import CareerInsightsPage from './pages/CareerInsightsPage'
+import SkillGapPage from './pages/SkillGapPage'
+import LearningPathPage from './pages/LearningPathPage'
+import JobFeedPage from './pages/JobFeedPage'
+import MentorConnectPage from './pages/MentorConnectPage'
+import ChatbotPage from './pages/ChatbotPage'
+import CareerDiscoveryQuiz from './pages/CareerDiscoveryQuiz'
+
+// Components
+import ProtectedRoute from './components/auth/ProtectedRoute'
+import Navbar from './components/layout/Navbar'
+
+function App() {
+  const { user } = useAuth()
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+      {user && <Navbar />}
+      <div className="pt-16">
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route 
+            path="/login" 
+            element={user ? <Navigate to="/dashboard" /> : <LoginPage />} 
+          />
+          <Route 
+            path="/register" 
+            element={user ? <Navigate to="/dashboard" /> : <RegisterPage />} 
+          />
+
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/onboarding" element={<OnboardingPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/career-quiz" element={<CareerDiscoveryQuiz />} />
+            <Route path="/careers" element={<CareerInsightsPage />} />
+            <Route path="/skills" element={<SkillGapPage />} />
+            <Route path="/learning" element={<LearningPathPage />} />
+            <Route path="/jobs" element={<JobFeedPage />} />
+            <Route path="/mentors" element={<MentorConnectPage />} />
+            <Route path="/chat" element={<ChatbotPage />} />
+          </Route>
+
+          {/* 404 */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
+    </div>
+  )
+}
+
+export default App
