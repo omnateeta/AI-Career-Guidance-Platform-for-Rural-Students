@@ -35,9 +35,11 @@ const LoginPage = () => {
         <div className="glass-card rounded-2xl p-8 shadow-2xl">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-20 h-20 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-4xl">C</span>
-            </div>
+            <img 
+              src="/logo.jpg" 
+              alt="Margdarshak AI Logo" 
+              className="w-24 h-24 mx-auto mb-4 rounded-2xl shadow-lg object-cover" 
+            />
             <h1 className="text-3xl font-bold text-gradient mb-2">Welcome Back!</h1>
             <p className="text-gray-600">Sign in to continue your career journey</p>
           </div>
