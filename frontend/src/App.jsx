@@ -29,7 +29,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
       {user && <Navbar />}
-      <div className="pt-16">
+      <main className={user ? 'pt-16' : ''}>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
@@ -61,7 +61,7 @@ function App() {
           {/* 404 */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </div>
+      </main>
     </div>
   )
 }

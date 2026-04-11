@@ -1,13 +1,15 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useLanguage, supportedLanguages } from '../../context/LanguageContext'
 import { useTheme } from '../../context/ThemeContext'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FaHome, FaBriefcase, FaChartLine, FaBook, FaUsers, FaComments, FaSignOutAlt, FaLanguage, FaWifi, FaGlobe, FaChevronDown, FaMapSigns } from 'react-icons/fa'
-import { useLanguage } from '../../context/LanguageContext'
+
 import { useState } from 'react'
 
 const Navbar = () => {
   const { user, logout } = useAuth()
+  const { language, setLanguage, t } = useLanguage()
   const { lowBandwidth, toggleLowBandwidth } = useTheme()
   const navigate = useNavigate()
   const location = useLocation()
@@ -99,17 +101,25 @@ const Navbar = () => {
               </AnimatePresence>
             </div>
 
+            {/* Low Bandwidth Toggle */}
+            <button
+              onClick={toggleLowBandwidth}
+              className={`p-2 rounded-lg transition-all duration-300 ${
+                lowBandwidth ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-600'
+              }`}
+              title="Toggle Low Bandwidth Mode"
+            >
+              <FaWifi className="w-4 h-4" />
+            </button>
+
             {/* User Profile */}
             <Link
               to="/profile"
-              className="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity duration-300"
+              className="flex items-center cursor-pointer hover:opacity-80 transition-opacity duration-300"
             >
               <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white font-semibold">
                 {user?.profile?.name?.charAt(0) || 'U'}
               </div>
-              <span className="hidden md:block text-sm font-medium text-gray-700">
-                {user?.profile?.name || 'User'}
-              </span>
             </Link>
 
             {/* Logout Button */}
