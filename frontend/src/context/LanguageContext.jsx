@@ -85,36 +85,38 @@ export const LanguageProvider = ({ children }) => {
       const script = document.createElement('script')
       script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit'
       script.async = true
+      script.defer = true
       script.onerror = () => {
         console.error('Failed to load Google Translate')
+        setGoogleTranslateReady(false)
+      }
+      script.onload = () => {
+        console.log('Google Translate script loaded')
       }
       document.body.appendChild(script)
     }
 
     // Initialize Google Translate callback
     window.googleTranslateElementInit = () => {
+      console.log('Google Translate initialized')
       if (window.google && window.google.translate) {
-        // Initialize for navbar dropdown
-        new window.google.translate.TranslateElement(
-          {
-            pageLanguage: 'en',
-            includedLanguages: 'en,hi,ta,te,kn,ml,mr,gu,pa,bn,or,as,ur,es,fr,de,pt,zh,ja,ko,ar,ru',
-            autoDisplay: false,
-          },
-          'google_translate_element_nav'
-        )
-        
-        // Initialize hidden element for programmatic control
-        new window.google.translate.TranslateElement(
-          {
-            pageLanguage: 'en',
-            includedLanguages: 'en,hi,ta,te,kn,ml,mr,gu,pa,bn,or,as,ur,es,fr,de,pt,zh,ja,ko,ar,ru',
-            autoDisplay: false,
-          },
-          'google_translate_element'
-        )
-        
-        setGoogleTranslateReady(true)
+        try {
+          // Initialize for navbar dropdown
+          new window.google.translate.TranslateElement(
+            {
+              pageLanguage: 'en',
+              includedLanguages: 'en,hi,ta,te,kn,ml,mr,gu,pa,bn,or,as,ur,es,fr,de,pt,zh,ja,ko,ar,ru',
+              autoDisplay: false,
+            },
+            'google_translate_element_nav'
+          )
+          
+          setGoogleTranslateReady(true)
+          console.log('Google Translate widget ready')
+        } catch (error) {
+          console.error('Error initializing Google Translate:', error)
+          setGoogleTranslateReady(false)
+        }
       }
     }
 
@@ -122,12 +124,15 @@ export const LanguageProvider = ({ children }) => {
     if (window.google && window.google.translate) {
       setGoogleTranslateReady(true)
     } else {
-      addGoogleTranslateScript()
-    }
-
-    // Cleanup
-    return () => {
-      delete window.googleTranslateElementInit
+      // Wait a bit before adding script
+      const timer = setTimeout(() => {
+        addGoogleTranslateScript()
+      }, 500)
+      
+      return () => {
+        clearTimeout(timer)
+        delete window.googleTranslateElementInit
+      }
     }
   }, [])
 
