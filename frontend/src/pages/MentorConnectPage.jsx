@@ -6,7 +6,8 @@ import { AuthContext } from '../context/AuthContext';
 import { 
   FaArrowLeft, FaStar, FaComments, FaCalendar, FaVideo, 
   FaMapMarkerAlt, FaClock, FaCheck, FaTimes, FaSpinner,
-  FaEnvelope, FaPhone, FaUserTie
+  FaEnvelope, FaPhone, FaUserTie, FaHandHoldingHeart, FaPlus,
+  FaExternalLinkAlt
 } from 'react-icons/fa';
 
 const MentorConnectPage = () => {
@@ -29,10 +30,14 @@ const MentorConnectPage = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
   const [filterAvailable, setFilterAvailable] = useState(false);
+  
+  // Mentor status
+  const [mentorStatus, setMentorStatus] = useState(null); // null, not_registered, pending_review, verified
 
   // Fetch mentors from backend
   useEffect(() => {
     fetchMentors();
+    checkMentorStatus();
   }, [filterAvailable]);
 
   const fetchMentors = async () => {
@@ -55,6 +60,21 @@ const MentorConnectPage = () => {
       setMentors([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkMentorStatus = async () => {
+    try {
+      const response = await axios.get('/api/mentors/my-status', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response.data.success) {
+        setMentorStatus(response.data.data.status);
+      }
+    } catch (error) {
+      console.error('Error checking mentor status:', error);
+      // Don't show error, just assume not registered
     }
   };
 
@@ -154,12 +174,25 @@ const MentorConnectPage = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-6"
       >
-        <Link to="/dashboard" className="inline-flex items-center space-x-2 text-primary-600 hover:text-primary-700 mb-3">
-          <FaArrowLeft className="w-4 h-4" />
-          <span>Back to Dashboard</span>
-        </Link>
-        <h1 className="text-3xl md:text-4xl font-bold text-gradient mb-2">Connect with Mentors 👥</h1>
-        <p className="text-gray-600">Learn from industry experts who guide your career journey</p>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <Link to="/dashboard" className="inline-flex items-center space-x-2 text-primary-600 hover:text-primary-700 mb-3">
+              <FaArrowLeft className="w-4 h-4" />
+              <span>Back to Dashboard</span>
+            </Link>
+            <h1 className="text-3xl md:text-4xl font-bold text-gradient mb-2">Connect with Mentors 👥</h1>
+            <p className="text-gray-600">Learn from industry experts who guide your career journey</p>
+          </div>
+          {(mentorStatus === 'not_registered' || mentorStatus === null) && (
+            <Link
+              to="/mentors/apply"
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold hover:shadow-xl transition-all transform hover:scale-105 whitespace-nowrap"
+            >
+              <FaHandHoldingHeart />
+              <span>Become a Mentor</span>
+            </Link>
+          )}
+        </div>
       </motion.div>
 
       {/* Stats */}
@@ -186,6 +219,79 @@ const MentorConnectPage = () => {
           <p className="text-gray-600">Average Rating</p>
         </div>
       </motion.div>
+
+      {/* Join as Mentor Banner - Always show unless verified or pending */}
+      {(mentorStatus === 'not_registered' || mentorStatus === null) && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mb-6 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-6 text-white shadow-lg"
+        >
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <FaHandHoldingHeart className="text-3xl" />
+                <h2 className="text-2xl font-bold">Want to Guide Students?</h2>
+              </div>
+              <p className="text-white/90 mb-1">
+                Join as a mentor and help rural students achieve their career goals!
+              </p>
+              <p className="text-white/80 text-sm">
+                Share your expertise, provide career guidance, and make a real difference in students' lives.
+              </p>
+            </div>
+            <Link
+              to="/mentors/apply"
+              className="flex items-center gap-2 px-6 py-3 bg-white text-purple-600 rounded-xl font-bold hover:shadow-xl transition-all transform hover:scale-105"
+            >
+              <FaPlus />
+              <span>Join as Mentor</span>
+              <FaExternalLinkAlt className="text-sm" />
+            </Link>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Pending Review Banner */}
+      {mentorStatus === 'pending_review' && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mb-6 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl p-6 text-white shadow-lg"
+        >
+          <div className="flex items-center gap-3">
+            <FaSpinner className="text-2xl animate-spin" />
+            <div>
+              <h3 className="text-xl font-bold mb-1">Application Under Review</h3>
+              <p className="text-white/90 text-sm">
+                Your mentor application is being reviewed. Our team will approve it within 48 hours. Thank you for your patience!
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Verified Mentor Banner */}
+      {mentorStatus === 'verified' && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mb-6 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 text-white shadow-lg"
+        >
+          <div className="flex items-center gap-3">
+            <FaCheck className="text-2xl" />
+            <div>
+              <h3 className="text-xl font-bold mb-1">You're a Verified Mentor! 🎉</h3>
+              <p className="text-white/90 text-sm">
+                Thank you for guiding students! Your expertise is making a real difference.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Filter */}
       <motion.div

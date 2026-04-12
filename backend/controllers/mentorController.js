@@ -245,8 +245,164 @@ exports.getMentorReviews = async (req, res) => {
   }
 };
 
+// @desc    Apply to become a mentor
+// @route   POST /api/mentors/apply
+// @access  Private
+exports.applyToBecomeMentor = async (req, res) => {
+  try {
+    const {
+      bio,
+      tagline,
+      expertise,
+      industries,
+      languagesSpoken,
+      yearsOfExperience,
+      currentRole,
+      currentCompany,
+      linkedIn,
+      website,
+      availableHours,
+      maxStudents,
+      whyDoYouWantToMentor,
+    } = req.body;
+
+    // Validate required fields
+    if (!bio || !expertise || !languagesSpoken || !whyDoYouWantToMentor) {
+      return res.status(400).json({
+        success: false,
+        message: 'Bio, expertise, languages, and motivation are required',
+      });
+    }
+
+    // Check if user is already a mentor
+    const existingMentor = await Mentor.findOne({ userId: req.user.id });
+    if (existingMentor) {
+      return res.status(400).json({
+        success: false,
+        message: 'You are already registered as a mentor',
+      });
+    }
+
+    // Check if user has completed their profile
+    const user = await User.findById(req.user.id);
+    if (!user || !user.profile || !user.profile.name) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please complete your profile first',
+      });
+    }
+
+    // Create mentor profile with pending verification
+    const mentor = await Mentor.create({
+      userId: req.user.id,
+      profile: {
+        bio,
+        tagline: tagline || '',
+        yearsOfExperience: yearsOfExperience || 0,
+        currentRole: currentRole || '',
+        currentCompany: currentCompany || '',
+        linkedIn: linkedIn || '',
+        website: website || '',
+      },
+      expertise: Array.isArray(expertise) ? expertise : [expertise],
+      industries: industries || [],
+      languagesSpoken: Array.isArray(languagesSpoken) ? languagesSpoken : [languagesSpoken],
+      availability: {
+        status: 'unavailable', // Start as unavailable until verified
+        maxStudents: maxStudents || 5,
+        currentStudents: 0,
+        availableHours: availableHours || [],
+      },
+      isVerified: false, // Requires admin verification
+      isFeatured: false,
+      totalSessions: 0,
+      rating: {
+        average: 0,
+        count: 0,
+      },
+      reviews: [],
+      matchedStudents: [],
+      responseTime: 'within 48 hours',
+    });
+
+    // Update user role to mentor
+    user.role = 'mentor';
+    await user.save();
+
+    logger.info(`User ${req.user.id} applied to become a mentor`);
+
+    res.status(201).json({
+      success: true,
+      message: 'Your mentor application has been submitted successfully! Our team will review it within 48 hours.',
+      data: {
+        mentor: {
+          id: mentor._id,
+          isVerified: mentor.isVerified,
+          status: 'pending_review',
+        },
+      },
+    });
+  } catch (error) {
+    logger.error('Error applying to become mentor:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to submit mentor application',
+      error: error.message,
+    });
+  }
+};
+
+// @desc    Check if user is a mentor
+// @route   GET /api/mentors/my-status
+// @access  Private
+exports.getMyMentorStatus = async (req, res) => {
+  try {
+    const mentor = await Mentor.findOne({ userId: req.user.id })
+      .populate('userId', 'profile.name profile.email profile.location')
+      .lean();
+
+    if (!mentor) {
+      return res.json({
+        success: true,
+        data: {
+          isMentor: false,
+          status: 'not_registered',
+        },
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        isMentor: true,
+        status: mentor.isVerified ? 'verified' : 'pending_review',
+        mentor: {
+          id: mentor._id,
+          isVerified: mentor.isVerified,
+          totalSessions: mentor.totalSessions,
+          rating: mentor.rating,
+          availability: mentor.availability,
+          expertise: mentor.expertise,
+          matchedStudents: mentor.matchedStudents.length,
+        },
+      },
+    });
+  } catch (error) {
+    logger.error('Error fetching mentor status:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch mentor status',
+      error: error.message,
+    });
+  }
+};
+
 // Helper function to get next available slot
 function getNextAvailableSlot(availability) {
+  if (!availability || !availability.availableHours || availability.availableHours.length === 0) {
+    return null;
+  }
+
   if (availability.status !== 'available') {
     return null;
   }
@@ -263,7 +419,7 @@ function getNextAvailableSlot(availability) {
     const todayIndex = days.indexOf(currentDay);
 
     if (dayIndex >= todayIndex) {
-      const dayName = slot.day.charAt(0).toUpperCase() + slot.day.day.slice(1);
+      const dayName = slot.day.charAt(0).toUpperCase() + slot.day.slice(1);
       if (dayIndex === todayIndex) {
         return `Today, ${slot.startTime}`;
       } else if (dayIndex === todayIndex + 1) {
