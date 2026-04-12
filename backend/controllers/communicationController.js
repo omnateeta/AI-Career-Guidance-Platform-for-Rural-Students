@@ -2,7 +2,7 @@ const communicationService = require('../services/communicationService');
 const CommunicationProgress = require('../models/CommunicationProgress');
 const logger = require('../config/logger');
 
-// POST /api/ai/communicate - Main AI communication endpoint
+// POST /api/ai/communicate - Main AI communication EVALUATOR endpoint
 const communicate = async (req, res) => {
   try {
     const { message, mode, language, context } = req.body;
@@ -16,16 +16,19 @@ const communicate = async (req, res) => {
       });
     }
 
+    logger.info(`🎯 Communication request - Mode: ${mode || 'practice'}, Language: ${language || 'en'}`);
+
     // Auto-detect language if not specified
     const detectedLanguage = language || communicationService.detectLanguage(message);
 
-    // Process with AI
-    const aiResponse = await communicationService.processCommunication(
+    // EVALUATE sentence (not chat!)
+    const evaluation = await communicationService.evaluateSentence(
       message,
-      mode || 'practice',
       detectedLanguage,
-      context || {}
+      mode || 'practice'
     );
+
+    logger.info(`✅ Evaluation result - Status: ${evaluation.status}, Score: ${evaluation.score}%`);
 
     // Track progress if user is authenticated
     if (userId) {
@@ -37,25 +40,25 @@ const communicate = async (req, res) => {
         progress.mode = mode || 'practice';
         progress.language = detectedLanguage;
         
-        // Update average confidence score
-        const totalScore = (progress.averageConfidenceScore * (progress.messagesExchanged - 1)) + aiResponse.confidence_score;
+        // Update average score
+        const totalScore = (progress.averageConfidenceScore * (progress.messagesExchanged - 1)) + evaluation.score;
         progress.averageConfidenceScore = Math.round(totalScore / progress.messagesExchanged);
         
-        // Award XP
-        const xpEarned = aiResponse.xp_earned || 5;
+        // Award XP based on score
+        const xpEarned = evaluation.score >= 80 ? 15 : evaluation.score >= 60 ? 10 : 5;
         progress.awardXP(xpEarned);
         
         // Update streak
         progress.updateStreak();
         
         // Track grammar improvements
-        if (aiResponse.grammar_errors && aiResponse.grammar_errors.length > 0) {
-          progress.grammarImprovements += aiResponse.grammar_errors.length;
+        if (evaluation.grammar_issues && evaluation.grammar_issues.length > 0) {
+          progress.grammarImprovements += evaluation.grammar_issues.length;
         }
         
-        // Track vocabulary
-        if (aiResponse.vocabulary_suggestions && aiResponse.vocabulary_suggestions.length > 0) {
-          aiResponse.vocabulary_suggestions.forEach(word => {
+        // Track vocabulary from suggestions
+        if (evaluation.suggestions && evaluation.suggestions.length > 0) {
+          evaluation.suggestions.forEach(word => {
             if (!progress.vocabularyLearned.includes(word)) {
               progress.vocabularyLearned.push(word);
             }
@@ -65,7 +68,7 @@ const communicate = async (req, res) => {
         await progress.save();
         
         // Add progress data to response
-        aiResponse.progress = {
+        evaluation.progress = {
           xp_earned: xpEarned,
           total_xp: progress.totalXP,
           streak: progress.streak,
@@ -79,13 +82,13 @@ const communicate = async (req, res) => {
 
     res.json({
       success: true,
-      data: aiResponse,
+      data: evaluation,
     });
   } catch (error) {
-    logger.error(`Error in communicate: ${error.message}`);
+    logger.error(`❌ Error in communicate: ${error.message}`);
     res.status(500).json({
       success: false,
-      message: 'Failed to process communication',
+      message: 'Failed to evaluate communication',
       error: error.message,
     });
   }
@@ -221,7 +224,7 @@ const updateLevel = async (req, res) => {
   }
 };
 
-// POST /api/ai/communicate/voice - Process voice input (placeholder for future)
+// POST /api/ai/communicate/voice - Process voice input (evaluates spoken sentence)
 const processVoice = async (req, res) => {
   try {
     const { transcript, mode, language } = req.body;
@@ -233,18 +236,19 @@ const processVoice = async (req, res) => {
       });
     }
 
-    // Process voice transcript same as text
-    const aiResponse = await communicationService.processCommunication(
+    logger.info(`🎤 Voice evaluation request: "${transcript}"`);
+
+    // Evaluate voice transcript same as text
+    const evaluation = await communicationService.evaluateSentence(
       transcript,
-      mode || 'practice',
       language || 'en',
-      {}
+      mode || 'practice'
     );
 
     res.json({
       success: true,
       data: {
-        ...aiResponse,
+        ...evaluation,
         voice_input: true,
         transcript,
       },
@@ -253,7 +257,7 @@ const processVoice = async (req, res) => {
     logger.error(`Error processing voice: ${error.message}`);
     res.status(500).json({
       success: false,
-      message: 'Failed to process voice input',
+      message: 'Failed to evaluate voice input',
       error: error.message,
     });
   }

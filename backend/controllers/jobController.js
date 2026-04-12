@@ -95,6 +95,8 @@ const getAllJobs = async (req, res) => {
     const { type = 'all', matchThreshold = 60, location, skills, page = 1 } = req.query;
     const userId = req.user?.id;
 
+    console.log('🔍 Fetching all jobs - Type:', type, 'Location:', location, 'Page:', page);
+
     let privateResult = { jobs: [], total: 0 };
     let governmentResult = { jobs: [], total: 0 };
 
@@ -105,6 +107,7 @@ const getAllJobs = async (req, res) => {
         keywords: skills || '',
         page: parseInt(page),
       });
+      console.log('📦 Private jobs fetched:', privateResult.jobs.length);
     }
 
     if (type === 'all' || type === 'government') {
@@ -112,6 +115,7 @@ const getAllJobs = async (req, res) => {
         state: location || '',
         page: parseInt(page),
       });
+      console.log('🏛️ Government jobs fetched:', governmentResult.jobs.length);
     }
 
     // Merge jobs
@@ -119,6 +123,8 @@ const getAllJobs = async (req, res) => {
       privateResult.jobs,
       governmentResult.jobs
     );
+
+    console.log('✅ Total merged jobs:', allJobs.length);
 
     // Apply AI matching if user is authenticated
     if (userId) {
@@ -129,6 +135,7 @@ const getAllJobs = async (req, res) => {
           user.toObject(),
           parseInt(matchThreshold)
         );
+        console.log('🤖 AI matching applied, filtered jobs:', allJobs.length);
       }
     }
 

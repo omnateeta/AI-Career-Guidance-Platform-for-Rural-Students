@@ -1,6 +1,7 @@
 const cron = require('node-cron');
 const jobAggregator = require('../services/jobAggregator');
 const jobAlertService = require('../services/jobAlertService');
+const examScraper = require('../services/examScraper');
 const JobListing = require('../models/JobListing');
 const logger = require('../config/logger');
 
@@ -98,6 +99,23 @@ const cleanupExpiredJobs = cron.schedule('0 2 * * *', async () => {
 });
 
 /**
+ * Job 4: Scrape and update competitive exams
+ * Runs every 12 hours (at midnight and noon)
+ */
+const updateCompetitiveExams = cron.schedule('0 */12 * * *', async () => {
+  logger.info('📚 Starting scheduled job: Update competitive exams');
+  
+  try {
+    const exams = await examScraper.scrapeAllExams();
+    logger.info(`✅ Exam update completed. Fetched ${exams.length} exams`);
+  } catch (error) {
+    logger.error(`❌ Error in updateCompetitiveExams: ${error.message}`);
+  }
+}, {
+  scheduled: false,
+});
+
+/**
  * Start all scheduled jobs
  */
 function startScheduledJobs() {
@@ -112,9 +130,13 @@ function startScheduledJobs() {
   cleanupExpiredJobs.start();
   logger.info('✓ Job cleanup schedule started (daily at 2 AM)');
   
+  updateCompetitiveExams.start();
+  logger.info('✓ Competitive exam update schedule started (every 12 hours)');
+  
   activeJobs.fetchAndStoreJobs = fetchAndStoreJobs;
   activeJobs.sendJobAlerts = sendJobAlerts;
   activeJobs.cleanupExpiredJobs = cleanupExpiredJobs;
+  activeJobs.updateCompetitiveExams = updateCompetitiveExams;
 }
 
 /**
@@ -138,4 +160,5 @@ module.exports = {
   fetchAndStoreJobs,
   sendJobAlerts,
   cleanupExpiredJobs,
+  updateCompetitiveExams,
 };

@@ -15,6 +15,7 @@ const {
 // Public routes (no authentication required)
 router.get('/private', getPrivateJobs);
 router.get('/government', getGovernmentJobs);
+router.get('/all', getAllJobs); // Public endpoint for all jobs
 router.get('/trending', getTrendingJobs);
 
 // Authenticated routes

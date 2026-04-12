@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { FaChartLine, FaBook, FaBriefcase, FaUsers, FaStar, FaTrophy, FaFire, FaArrowRight } from 'react-icons/fa'
+import NotificationBar from '../components/ui/NotificationBar'
 
 const DashboardPage = () => {
   const { user } = useAuth()
@@ -38,16 +39,20 @@ const DashboardPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      {/* Welcome Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-6"
-      >
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">
-          Welcome back, <span className="text-gradient">{user?.profile?.name || 'Student'}!</span> 👋
-        </h1>
+    <div className="min-h-screen">
+      {/* Real-time Notification Bar */}
+      <NotificationBar />
+      
+      <div className="container mx-auto px-4 py-6">
+        {/* Welcome Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6"
+        >
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">
+            Welcome back, <span className="text-gradient">{user?.profile?.name || 'Student'}!</span> 👋
+          </h1>
         <p className="text-gray-600">
           Ready to explore new career opportunities today?
         </p>
@@ -229,6 +234,7 @@ const DashboardPage = () => {
           Keep progressing on your skill development journey!
         </p>
       </motion.div>
+      </div>
     </div>
   )
 }

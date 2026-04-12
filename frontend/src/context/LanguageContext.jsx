@@ -96,8 +96,13 @@ export const LanguageProvider = ({ children }) => {
       const script = document.createElement('script')
       script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit'
       script.async = true
+      script.defer = true
       script.onerror = () => {
         console.error('Failed to load Google Translate')
+        setGoogleTranslateReady(false)
+      }
+      script.onload = () => {
+        console.log('Google Translate script loaded')
       }
       document.body.appendChild(script)
     }
@@ -123,6 +128,7 @@ export const LanguageProvider = ({ children }) => {
             console.log('Google Translate initialized successfully')
           } catch (error) {
             console.error('Error initializing Google Translate:', error)
+            setGoogleTranslateReady(false)
           }
         }
       }
@@ -133,12 +139,14 @@ export const LanguageProvider = ({ children }) => {
       window.googleTranslateInitialized = true
       setGoogleTranslateReady(true)
     } else {
-      addGoogleTranslateScript()
-    }
-
-    // Cleanup
-    return () => {
-      // Don't delete the callback to prevent re-initialization
+      // Wait a bit before adding script
+      const timer = setTimeout(() => {
+        addGoogleTranslateScript()
+      }, 500)
+      
+      return () => {
+        clearTimeout(timer)
+      }
     }
   }, [])
 

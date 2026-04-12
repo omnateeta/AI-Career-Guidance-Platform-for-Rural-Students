@@ -19,8 +19,12 @@ const careerRoutes = require('./routes/careerRoutes');
 const skillRoutes = require('./routes/skillRoutes');
 const learningRoutes = require('./routes/learningRoutes');
 const jobRoutes = require('./routes/jobRoutes');
+const examRoutes = require('./routes/examRoutes');
 const mentorRoutes = require('./routes/mentorRoutes');
 const communicationRoutes = require('./routes/communicationRoutes');
+const scholarshipRoutes = require('./routes/scholarshipRoutes');
+const collegeRoutes = require('./routes/collegeRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 // Import scheduled jobs
 const { startScheduledJobs } = require('./jobs/scheduleJobs');
@@ -83,8 +87,12 @@ app.use('/api/career', careerRoutes);
 app.use('/api/skills', skillRoutes);
 app.use('/api/learning', learningRoutes);
 app.use('/api/jobs', jobRoutes);
+app.use('/api/exams', examRoutes);
 app.use('/api/mentors', mentorRoutes);
 app.use('/api/ai', communicationRoutes);
+app.use('/api/scholarships', scholarshipRoutes);
+app.use('/api/colleges', collegeRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

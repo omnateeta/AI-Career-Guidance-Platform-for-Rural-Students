@@ -10,14 +10,15 @@ class CommunicationService {
   }
 
   /**
-   * Process communication request and get AI response
+   * Evaluate user sentence - AI Communication Evaluator
+   * Returns: status, score, correction, feedback
    */
-  async processCommunication(message, mode, language, context = {}) {
+  async evaluateSentence(userSentence, language = 'en', mode = 'practice') {
     try {
-      const { level = 'beginner', topic = '' } = context;
+      logger.info(`🎯 Evaluating sentence: "${userSentence}"`);
       
-      // Build prompt based on mode
-      const prompt = this.buildPrompt(message, mode, language, level, topic);
+      // Build evaluation prompt
+      const prompt = this.buildEvaluationPrompt(userSentence, language, mode);
       
       // Call OpenAI API
       const response = await this.openai.chat.completions.create({
@@ -25,38 +26,207 @@ class CommunicationService {
         messages: [
           {
             role: 'system',
-            content: 'You are an expert AI communication coach. Always respond in valid JSON format only.',
+            content: 'You are an AI English communication evaluator. Return ONLY valid JSON. No explanations outside JSON.',
           },
           {
             role: 'user',
             content: prompt,
           },
         ],
-        temperature: 0.7,
-        max_tokens: 1000,
+        temperature: 0.3, // Lower temperature for consistent evaluation
+        max_tokens: 500,
+        response_format: { type: "json_object" }, // Force JSON response
       });
 
       // Parse AI response
       const aiResponse = response.choices[0].message.content;
-      const parsedResponse = this.parseAIResponse(aiResponse);
-
-      // Add metadata
-      parsedResponse.mode = mode;
-      parsedResponse.language = language;
-      parsedResponse.xp_earned = this.calculateXP(parsedResponse, mode);
-
-      return parsedResponse;
-    } catch (error) {
-      logger.error(`Error in communication service: ${error.message}`);
+      logger.info(`📦 Raw AI response: ${aiResponse}`);
       
-      // Fallback to rule-based response if OpenAI fails
+      const evaluation = this.parseEvaluationResponse(aiResponse, userSentence);
+      
+      logger.info(`✅ Evaluation complete - Score: ${evaluation.score}%, Status: ${evaluation.status}`);
+      
+      return evaluation;
+    } catch (error) {
+      logger.error(`❌ Error in evaluation service: ${error.message}`);
+      
+      // Fallback to rule-based evaluation
       if (error.status === 429 || error.code === 'insufficient_quota') {
-        logger.warn('OpenAI quota exceeded, using fallback response');
-        return this.getFallbackResponse(message, mode, language, context);
+        logger.warn('⚠️ OpenAI quota exceeded, using fallback evaluator');
+        return this.getRuleBasedEvaluation(userSentence, language);
       }
       
       throw error;
     }
+  }
+
+  /**
+   * Build Evaluation Prompt for LLM
+   */
+  buildEvaluationPrompt(userSentence, language, mode) {
+    return `You are an AI English communication evaluator.
+
+Your job is to evaluate the user's sentence.
+
+USER SENTENCE: "${userSentence}"
+
+Rules:
+1. Check grammar
+2. Check sentence structure
+3. Check clarity
+4. Check vocabulary usage
+
+If CORRECT:
+- Set status: "correct"
+- Give score: 80-100%
+- Provide minor improvements if needed
+
+If INCORRECT:
+- Set status: "incorrect"
+- Provide corrected sentence
+- Explain mistake simply
+- Give score: 0-70%
+
+Return ONLY valid JSON in this EXACT format:
+{
+  "status": "correct" or "incorrect",
+  "original": "${userSentence}",
+  "corrected": "Corrected version (same as original if correct)",
+  "score": 85,
+  "feedback": "Simple explanation of what's right or wrong",
+  "grammar_issues": ["issue1", "issue2"] or [],
+  "suggestions": ["suggestion1", "suggestion2"] or []
+}
+
+Examples:
+
+User: "I am going to school"
+Response: {
+  "status": "correct",
+  "original": "I am going to school",
+  "corrected": "I am going to school",
+  "score": 95,
+  "feedback": "Perfect sentence! Grammar and structure are correct.",
+  "grammar_issues": [],
+  "suggestions": ["You could say 'I am heading to school' for variety"]
+}
+
+User: "I goed to school yesterday"
+Response: {
+  "status": "incorrect",
+  "original": "I goed to school yesterday",
+  "corrected": "I went to school yesterday",
+  "score": 40,
+  "feedback": "Incorrect past tense. 'Go' becomes 'went' in past tense, not 'goed'.",
+  "grammar_issues": ["Incorrect past tense verb form"],
+  "suggestions": ["Irregular verbs: go → went → gone"]
+}
+
+IMPORTANT: Return ONLY JSON. No markdown, no code blocks, no explanations.`;
+  }
+
+  /**
+   * Parse evaluation response
+   */
+  parseEvaluationResponse(aiResponse, userSentence) {
+    try {
+      // Remove markdown code blocks if present
+      let cleaned = aiResponse.trim();
+      if (cleaned.startsWith('```')) {
+        cleaned = cleaned.replace(/^```json?\n?/, '').replace(/\n?```$/, '');
+      }
+      
+      const evaluation = JSON.parse(cleaned);
+      
+      // Validate required fields
+      if (!evaluation.status || !evaluation.score) {
+        throw new Error('Missing required fields');
+      }
+      
+      // Ensure score is number
+      evaluation.score = Number(evaluation.score);
+      
+      // Validate status
+      if (!['correct', 'incorrect'].includes(evaluation.status)) {
+        evaluation.status = evaluation.score >= 70 ? 'correct' : 'incorrect';
+      }
+      
+      // Ensure arrays exist
+      evaluation.grammar_issues = evaluation.grammar_issues || [];
+      evaluation.suggestions = evaluation.suggestions || [];
+      
+      return evaluation;
+    } catch (error) {
+      logger.error(`Failed to parse evaluation: ${error.message}`);
+      logger.error(`Raw response: ${aiResponse}`);
+      
+      // Fallback evaluation
+      return this.getRuleBasedEvaluation(userSentence);
+    }
+  }
+
+  /**
+   * Rule-based evaluation fallback
+   */
+  getRuleBasedEvaluation(userSentence, language = 'en') {
+    let score = 80;
+    let status = 'correct';
+    let corrected = userSentence;
+    let feedback = 'Your sentence looks good!';
+    const grammarIssues = [];
+    const suggestions = [];
+
+    // Check for common errors
+    if (/\bi\b(?![''])/g.test(userSentence) && !/\bI\b/.test(userSentence)) {
+      grammarIssues.push('Capitalize "I" when referring to yourself');
+      corrected = corrected.replace(/\bi\b/g, 'I');
+      score -= 10;
+    }
+
+    if (/\bgoed\b/i.test(userSentence)) {
+      grammarIssues.push('Incorrect past tense: "goed" should be "went"');
+      corrected = corrected.replace(/goed/gi, 'went');
+      score -= 20;
+      status = 'incorrect';
+    }
+
+    if (/\bmore better\b/i.test(userSentence)) {
+      grammarIssues.push('Double comparison: use "better" not "more better"');
+      corrected = corrected.replace(/more better/gi, 'better');
+      score -= 15;
+      status = 'incorrect';
+    }
+
+    if (/\b(I|He|She|We|They) going\b/i.test(userSentence) && 
+        !/\b(am|is|are|was|were) going\b/i.test(userSentence)) {
+      grammarIssues.push('Missing auxiliary verb before "going"');
+      corrected = corrected.replace(/(I) going/i, '$1 am going');
+      corrected = corrected.replace(/(He|She) going/i, '$1 is going');
+      corrected = corrected.replace(/(We|They) going/i, '$1 are going');
+      score -= 15;
+      status = 'incorrect';
+    }
+
+    // Update status based on score
+    if (score < 70) {
+      status = 'incorrect';
+      feedback = `Found ${grammarIssues.length} grammar issue(s). See corrected version.`;
+    } else {
+      status = 'correct';
+      feedback = grammarIssues.length > 0 
+        ? `Mostly correct! ${grammarIssues.length} minor issue(s) fixed.`
+        : 'Perfect sentence! Grammar and structure are correct.';
+    }
+
+    return {
+      status,
+      original: userSentence,
+      corrected,
+      score: Math.max(score, 0),
+      feedback,
+      grammar_issues: grammarIssues,
+      suggestions,
+    };
   }
 
   /**

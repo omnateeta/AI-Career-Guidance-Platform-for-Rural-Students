@@ -7,10 +7,18 @@ const {
   bookSession,
   sendMessage,
   getMentorReviews,
+  applyToBecomeMentor,
+  getMyMentorStatus,
 } = require('../controllers/mentorController');
 
 // Get all mentors
 router.get('/', protect, getAllMentors);
+
+// Check user's mentor status
+router.get('/my-status', protect, getMyMentorStatus);
+
+// Apply to become a mentor
+router.post('/apply', protect, applyToBecomeMentor);
 
 // Get mentor details
 router.get('/:id', protect, getMentorDetails);

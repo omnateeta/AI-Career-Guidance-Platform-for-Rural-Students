@@ -118,7 +118,10 @@ const JobFeedPage = () => {
         params.append('matchThreshold', matchThreshold)
       }
       
-      const response = await fetch(`${apiUrl}${endpoint}?${params}`, {
+      const url = `${apiUrl}${endpoint}?${params}`
+      console.log('🔍 Fetching jobs from:', url)
+      
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -126,11 +129,16 @@ const JobFeedPage = () => {
         },
       })
 
+      console.log('📡 Response status:', response.status)
+
       if (!response.ok) {
-        throw new Error('Failed to fetch jobs')
+        const errorText = await response.text()
+        console.error('❌ Error response:', errorText)
+        throw new Error(`Failed to fetch jobs: ${response.status} ${response.statusText}`)
       }
 
       const data = await response.json()
+      console.log('✅ Jobs received:', data.count, 'out of', data.total)
       
       if (data.success && data.jobs) {
         setJobs(data.jobs)
@@ -141,7 +149,7 @@ const JobFeedPage = () => {
         setTotalJobs(0)
       }
     } catch (error) {
-      console.error('Error fetching jobs:', error.message)
+      console.error('❌ Error fetching jobs:', error.message)
       setError('Failed to fetch jobs. Please try again.')
       setJobs([])
     } finally {

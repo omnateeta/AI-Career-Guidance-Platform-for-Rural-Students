@@ -2,10 +2,7 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const conn = await mongoose.connect(process.env.MONGODB_URI);
 
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
 
@@ -24,7 +21,6 @@ const createIndexes = async () => {
     const Mentor = require('../models/Mentor');
 
     // User indexes
-    await User.collection.createIndex({ email: 1 }, { unique: true });
     await User.collection.createIndex({ 'profile.location.state': 1 });
     await User.collection.createIndex({ 'profile.location.district': 1 });
 

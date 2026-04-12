@@ -2,6 +2,7 @@ const axios = require('axios');
 const NodeCache = require('node-cache');
 const crypto = require('crypto');
 const logger = require('../config/logger');
+const realisticJobFallback = require('./realisticJobFallback');
 
 // Cache with 1 hour TTL
 const jobCache = new NodeCache({ stdTTL: parseInt(process.env.JOB_CACHE_TTL) || 3600 });
@@ -25,10 +26,20 @@ class JobAggregator {
     }
 
     try {
-      // If no API keys, return empty array (controller will handle fallback)
+      // If no API keys, use realistic fallback jobs
       if (!this.adzunaAppId || this.adzunaAppId === 'your_app_id') {
-        logger.warn('Adzuna API keys not configured');
-        return [];
+        logger.warn('Adzuna API keys not configured, using realistic fallback jobs');
+        const fallbackJobs = realisticJobFallback.generateRealisticJobs({
+          location,
+          keywords,
+          page,
+          resultsPerPage,
+        });
+        
+        // Cache the fallback results
+        jobCache.set(cacheKey, fallbackJobs);
+        
+        return fallbackJobs;
       }
 
       const response = await axios.get('https://api.adzuna.com/v1/api/jobs/in/search/1', {

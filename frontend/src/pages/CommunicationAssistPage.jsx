@@ -2,11 +2,12 @@ import { useState, useRef, useEffect, useContext } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import axios from 'axios'
 import { AuthContext } from '../context/AuthContext'
+import AIVideoCall from '../components/ui/AIVideoCall'
 import { 
   FaPaperPlane, FaRobot, FaUser, FaSpinner, FaMicrophone,
   FaTimes, FaVolumeUp, FaCheck, FaStar, FaLightbulb,
   FaChartLine, FaTrophy, FaFire, FaLanguage, FaComments,
-  FaGraduationCap, FaBriefcase, FaExchangeAlt
+  FaGraduationCap, FaBriefcase, FaExchangeAlt, FaVideo
 } from 'react-icons/fa'
 
 const CommunicationAssistPage = () => {
@@ -20,6 +21,7 @@ const CommunicationAssistPage = () => {
   const [isRecording, setIsRecording] = useState(false)
   const [progress, setProgress] = useState(null)
   const [showProgress, setShowProgress] = useState(false)
+  const [showVideoCall, setShowVideoCall] = useState(false)
   const messagesEndRef = useRef(null)
   const recognitionRef = useRef(null)
 
@@ -37,10 +39,9 @@ const CommunicationAssistPage = () => {
   ]
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
-
-  useEffect(() => {
+    // Scroll to top when page loads - MUST happen first
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    
     fetchProgress()
     // Welcome message
     setMessages([{
@@ -51,6 +52,13 @@ const CommunicationAssistPage = () => {
       data: null,
     }])
   }, [])
+
+  useEffect(() => {
+    // Only scroll to messages if there are more than 1 message (after user starts chatting)
+    if (messages.length > 1) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [messages])
 
   const getWelcomeMessage = () => {
     const welcomeMessages = {
@@ -199,8 +207,19 @@ const CommunicationAssistPage = () => {
     <div className="container mx-auto px-4 py-6 max-w-6xl">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-        <h1 className="text-4xl font-bold text-gradient mb-2">AI Communication Assist 🎯</h1>
-        <p className="text-gray-600">Practice, Improve & Master Communication Skills</p>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h1 className="text-4xl font-bold text-gradient mb-2">AI Communication Assist 🎯</h1>
+            <p className="text-gray-600">Practice, Improve & Master Communication Skills</p>
+          </div>
+          <button
+            onClick={() => setShowVideoCall(true)}
+            className="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold hover:shadow-2xl transition-all transform hover:scale-105"
+          >
+            <FaVideo className="text-xl" />
+            <span>Start Video Call with AI Teacher</span>
+          </button>
+        </div>
       </motion.div>
 
       {/* Controls Bar */}
@@ -364,73 +383,119 @@ const CommunicationAssistPage = () => {
                     </div>
                   </div>
 
-                  {/* AI Response Cards */}
+                  {/* AI Evaluation Results */}
                   {message.data && message.sender === 'bot' && (
-                    <div className="space-y-3">
-                      {/* Corrected Version */}
+                    <div className="space-y-3 mt-3">
+                      {/* Status Badge & Score */}
+                      {(message.data.status || message.data.score !== undefined) && (
+                        <div className="p-4 bg-white border-2 border-gray-200 rounded-xl">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center space-x-2">
+                              {/* Status Badge */}
+                              {message.data.status === 'correct' ? (
+                                <div className="flex items-center space-x-2 px-3 py-1 bg-green-100 border-2 border-green-500 rounded-full">
+                                  <FaCheck className="text-green-600" />
+                                  <span className="text-sm font-bold text-green-700">Correct!</span>
+                                </div>
+                              ) : message.data.status === 'incorrect' ? (
+                                <div className="flex items-center space-x-2 px-3 py-1 bg-red-100 border-2 border-red-500 rounded-full">
+                                  <FaTimes className="text-red-600" />
+                                  <span className="text-sm font-bold text-red-700">Needs Improvement</span>
+                                </div>
+                              ) : null}
+                            </div>
+                            
+                            {/* Score */}
+                            {message.data.score !== undefined && (
+                              <div className="text-right">
+                                <p className="text-2xl font-bold text-purple-600">{message.data.score}%</p>
+                                <p className="text-xs text-gray-500">Score</p>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {/* Score Progress Bar */}
+                          {message.data.score !== undefined && (
+                            <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                              <div
+                                className={`h-3 rounded-full transition-all duration-500 ${
+                                  message.data.score >= 80 ? 'bg-green-500' :
+                                  message.data.score >= 60 ? 'bg-yellow-500' : 'bg-red-500'
+                                }`}
+                                style={{ width: `${message.data.score}%` }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Corrected Sentence */}
                       {message.data.corrected && message.data.corrected !== message.data.original && (
-                        <div className="p-4 bg-green-50 border border-green-200 rounded-xl">
+                        <div className="p-4 bg-green-50 border-2 border-green-300 rounded-xl">
                           <div className="flex items-center space-x-2 mb-2">
                             <FaCheck className="text-green-600" />
-                            <p className="text-sm font-semibold text-green-800">Corrected:</p>
+                            <p className="text-sm font-bold text-green-800">Corrected Sentence:</p>
                           </div>
-                          <p className="text-sm text-green-700">{message.data.corrected}</p>
+                          <p className="text-base font-medium text-green-700">{message.data.corrected}</p>
                         </div>
                       )}
 
-                      {/* Improved Version */}
-                      {message.data.improved && (
-                        <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                      {/* Feedback */}
+                      {message.data.feedback && (
+                        <div className="p-4 bg-blue-50 border-2 border-blue-300 rounded-xl">
                           <div className="flex items-center space-x-2 mb-2">
-                            <FaStar className="text-blue-600" />
-                            <p className="text-sm font-semibold text-blue-800">Improved:</p>
+                            <FaLightbulb className="text-blue-600" />
+                            <p className="text-sm font-bold text-blue-800">Feedback:</p>
                           </div>
-                          <p className="text-sm text-blue-700">{message.data.improved}</p>
+                          <p className="text-sm text-blue-700">{message.data.feedback}</p>
                         </div>
                       )}
 
-                      {/* Explanation */}
-                      {message.data.explanation && (
-                        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
+                      {/* Grammar Issues */}
+                      {message.data.grammar_issues && message.data.grammar_issues.length > 0 && (
+                        <div className="p-4 bg-orange-50 border-2 border-orange-300 rounded-xl">
                           <div className="flex items-center space-x-2 mb-2">
-                            <FaLightbulb className="text-yellow-600" />
-                            <p className="text-sm font-semibold text-yellow-800">Tip:</p>
+                            <FaStar className="text-orange-600" />
+                            <p className="text-sm font-bold text-orange-800">Grammar Issues:</p>
                           </div>
-                          <p className="text-sm text-yellow-700">{message.data.explanation}</p>
+                          <ul className="space-y-1">
+                            {message.data.grammar_issues.map((issue, idx) => (
+                              <li key={idx} className="text-sm text-orange-700 flex items-start">
+                                <span className="mr-2">•</span>
+                                <span>{issue}</span>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
                       )}
 
-                      {/* Confidence Score */}
-                      {message.data.confidence_score !== undefined && (
-                        <div className="p-4 bg-purple-50 border border-purple-200 rounded-xl">
-                          <div className="flex items-center justify-between mb-2">
-                            <p className="text-sm font-semibold text-purple-800">Confidence Score</p>
-                            <p className="text-lg font-bold text-purple-600">{message.data.confidence_score}%</p>
+                      {/* Suggestions */}
+                      {message.data.suggestions && message.data.suggestions.length > 0 && (
+                        <div className="p-4 bg-purple-50 border-2 border-purple-300 rounded-xl">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <FaLightbulb className="text-purple-600" />
+                            <p className="text-sm font-bold text-purple-800">Suggestions:</p>
                           </div>
-                          <div className="w-full bg-purple-200 rounded-full h-3">
-                            <div
-                              className={`h-3 rounded-full transition-all duration-500 ${
-                                message.data.confidence_score >= 80 ? 'bg-green-500' :
-                                message.data.confidence_score >= 60 ? 'bg-yellow-500' : 'bg-red-500'
-                              }`}
-                              style={{ width: `${message.data.confidence_score}%` }}
-                            />
-                          </div>
+                          <ul className="space-y-1">
+                            {message.data.suggestions.map((suggestion, idx) => (
+                              <li key={idx} className="text-sm text-purple-700 flex items-start">
+                                <span className="mr-2">💡</span>
+                                <span>{suggestion}</span>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
                       )}
 
-                      {/* Next Exercise/Question */}
-                      {message.data.next_question && (
-                        <button
-                          onClick={() => {
-                            setInput(message.data.next_question)
-                            setTimeout(() => handleSend(), 100)
-                          }}
-                          className="w-full p-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:shadow-lg transition-all duration-300 text-left"
-                        >
-                          <p className="text-sm font-semibold mb-1">💪 Try This Exercise:</p>
-                          <p className="text-sm">{message.data.next_question}</p>
-                        </button>
+                      {/* Progress Info */}
+                      {message.data.progress && (
+                        <div className="p-3 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-purple-700">+{message.data.progress.xp_earned} XP</span>
+                            <span className="text-purple-700">Streak: {message.data.progress.streak}🔥</span>
+                            <span className="text-purple-700">Level: {message.data.progress.level}</span>
+                          </div>
+                        </div>
                       )}
                     </div>
                   )}
@@ -504,6 +569,17 @@ const CommunicationAssistPage = () => {
           </div>
         </div>
       </motion.div>
+      
+      {/* AI Video Call Modal */}
+      <AnimatePresence>
+        {showVideoCall && (
+          <AIVideoCall
+            onClose={() => setShowVideoCall(false)}
+            language={getSpeechLanguageCode()}
+            mode={mode}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
