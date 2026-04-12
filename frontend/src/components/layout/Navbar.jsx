@@ -3,8 +3,14 @@ import { useAuth } from '../../context/AuthContext'
 import { useLanguage, supportedLanguages } from '../../context/LanguageContext'
 import { useTheme } from '../../context/ThemeContext'
 import { motion, AnimatePresence } from 'framer-motion'
+<<<<<<< HEAD
 import { FaHome, FaBriefcase, FaChartLine, FaBook, FaUsers, FaComments, FaSignOutAlt, FaLanguage, FaWifi, FaGlobe, FaChevronDown, FaMapSigns, FaAward, FaUniversity } from 'react-icons/fa'
 import { useState, useEffect } from 'react'
+=======
+import { FaHome, FaBriefcase, FaChartLine, FaBook, FaUsers, FaComments, FaSignOutAlt, FaLanguage, FaWifi, FaGlobe, FaChevronDown, FaMapSigns } from 'react-icons/fa'
+
+import { useState } from 'react'
+>>>>>>> 9ec20b58caecabda5971c90f2ed4c0d6085446a6
 
 const Navbar = () => {
   const { user, logout } = useAuth()

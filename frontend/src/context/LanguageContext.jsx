@@ -124,6 +124,18 @@ export const LanguageProvider = ({ children }) => {
               'google_translate_element'
             )
             
+            // Also initialize nav dropdown if exists
+            if (document.getElementById('google_translate_element_nav')) {
+              new window.google.translate.TranslateElement(
+                {
+                  pageLanguage: 'en',
+                  includedLanguages: 'en,hi,ta,te,kn,ml,mr,gu,pa,bn,or,as,ur,es,fr,de,pt,zh,ja,ko,ar,ru',
+                  autoDisplay: false,
+                },
+                'google_translate_element_nav'
+              )
+            }
+            
             setGoogleTranslateReady(true)
             console.log('Google Translate initialized successfully')
           } catch (error) {
@@ -139,6 +151,7 @@ export const LanguageProvider = ({ children }) => {
       window.googleTranslateInitialized = true
       setGoogleTranslateReady(true)
     } else {
+<<<<<<< HEAD
       // Wait a bit before adding script
       const timer = setTimeout(() => {
         addGoogleTranslateScript()
@@ -147,6 +160,14 @@ export const LanguageProvider = ({ children }) => {
       return () => {
         clearTimeout(timer)
       }
+=======
+      addGoogleTranslateScript()
+    }
+
+    // Cleanup
+    return () => {
+      // Don't delete the callback to prevent re-initialization
+>>>>>>> 9ec20b58caecabda5971c90f2ed4c0d6085446a6
     }
   }, [])
 
