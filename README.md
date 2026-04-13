@@ -8,8 +8,8 @@
 [![MongoDB](https://img.shields.io/badge/Database-MongoDB-brightgreen.svg)](https://www.mongodb.com/)
 
 ---
-
-## 🌟 Overview
+ 
+## 🌟 Overview 
 
 **Margdarshak AI** (मार्गदर्शक - "Guide" in Hindi) is a comprehensive full-stack AI-powered career guidance platform specifically designed for rural students. It helps students discover career paths, analyze skill gaps, access learning resources, find jobs, and connect with mentors - all in their native language.
 
