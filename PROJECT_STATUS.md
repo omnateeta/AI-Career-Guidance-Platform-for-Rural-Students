@@ -9,9 +9,9 @@
 - **MongoDB connection** with automatic index creation
 - **Winston logger** for production-ready logging
 - **Error handling** system with custom error classes
-- **Socket.io** setup for real-time features
+- **Socket.io** setup for real-time features 
 
-#### ✅ Database Schemas (7 Models)
+#### ✅ Database Schemas (7 Models) 
 1. **User** - Complete profile with education, skills, gamification
 2. **CareerRecommendation** - AI-generated career suggestions
 3. **SkillGap** - Skill analysis and learning resources
