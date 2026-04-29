@@ -15,13 +15,13 @@
 
 ### ✨ Key Features
 
-- 🎯 **Career Discovery Quiz** - Interactive 10-question quiz to find ideal career path
-- 📊 **AI-Powered Career Recommendations** - Personalized career suggestions
-- 📈 **Skill Gap Analysis** - Visual comparison of current vs required skills
-- 📚 **Personalized Learning Paths** - Curated courses and resources
-- 💼 **Real-Time Job Feed** - Live job listings from top Indian companies
-- 👥 **Mentor Connection** - Connect with industry professionals
-- 🤖 **AI Career Assistant** - 24/7 chatbot for career guidance
+- 🎯 **Career Discovery Quiz** - Interactive 10-question quiz to find ideal career path.
+- 📊 **AI-Powered Career Recommendations** - Personalized career suggestions.
+- 📈 **Skill Gap Analysis** - Visual comparison of current vs required skills.
+- 📚 **Personalized Learning Paths** - Curated courses and resources.
+- 💼 **Real-Time Job Feed** - Live job listings from top Indian companies.
+- 👥 **Mentor Connection** - Connect with industry professionals.
+- 🤖 **AI Career Assistant** - 24/7 chatbot for career guidance.
 - 🌍 **Multi-Language Support** - 22+ languages including all major Indian languages
 - 🎮 **Gamification** - XP, badges, streaks, and achievements
 - 📱 **Low Bandwidth Mode** - Optimized for rural areas with slow internet
